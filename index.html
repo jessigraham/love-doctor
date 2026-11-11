@@ -218,7 +218,7 @@ textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border
 .vm-cell strong{color:var(--c);font-size:.95rem}
 .vm-cell.on{border-color:var(--c);background:color-mix(in srgb, var(--c) 14%, var(--surface));color:var(--ink)}
 .note a{color:var(--accent)}
-.strengths{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:8px}
+.strengths,.j-section .strengths{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:8px}
 .strengths li{padding:6px 12px;border-radius:999px;background:color-mix(in srgb, var(--secure) 14%, var(--surface));font-size:.88rem;font-weight:500}
 .support{display:grid;gap:8px;padding:16px 18px;border-radius:12px;border:1px solid var(--line);font-size:.93rem}
 .support ul{margin:0;padding-left:18px;display:grid;gap:4px}
@@ -1260,7 +1260,7 @@ const SCREENS={
     <p class="j-feel" style="color:var(${s.c})">${s.feel}</p><p class="lede">${s.about}</p>
     <div class="j-section"><h3>Your strengths</h3><p class="hint">Every style has gifts. These are yours to build on.</p><ul class="strengths">${li(STRENGTHS[J.style])}</ul></div>
     <div class="j-section"><h3>Where it often starts</h3><p>${ORIGINS[J.style]}</p><p class="hint">Caregivers don't have to mean any harm for this to happen. A child can feel unmet even when parents are doing their best. And attachment is a spectrum: most people recognize a bit of more than one style in themselves.</p></div>
-    <div class="j-section"><h3>Where your style comes from</h3><p class="hint">Psychologists describe each style by two beliefs: how you see yourself, and how much you trust other people. ${VIEWS[J.style].self?"You tend to see yourself as worthy of love":"Deep down you may doubt you're worthy of love"}, and ${VIEWS[J.style].others?"you tend to expect that others can be trusted.":"you tend to expect that others will let you down."}</p>${viewMap(J.style)}</div>
+    <div class="j-section"><h3>How you see yourself and others</h3><p class="hint">Psychologists describe each style by two beliefs: how you see yourself, and how much you trust other people. ${VIEWS[J.style].self?"You tend to see yourself as worthy of love":"Deep down you may doubt you're worthy of love"}, and ${VIEWS[J.style].others?"you tend to expect that others can be trusted.":"you tend to expect that others will let you down."}</p>${viewMap(J.style)}</div>
     ${r?`<div class="axes"><div class="axis"><span>Anxiety</span><div class="bar"><i style="width:${pct(r.anx)}%"></i></div><span>${r.anx.toFixed(1)}</span></div><div class="axis"><span>Avoidance</span><div class="bar"><i style="width:${pct(r.avo)}%"></i></div><span>${r.avo.toFixed(1)}</span></div></div>`:""}
     <dl class="j-facts">
       <div><dt>How you show love</dt><dd>${cap(SELF[J.style].love)}</dd></div>
