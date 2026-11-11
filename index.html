@@ -1521,13 +1521,14 @@ document.getElementById("j-back").onclick=jBack;
 const KEYS="ABCDEFGH";
 // keyboard: letters pick options, 1-5 answer the quiz, Enter continues
 document.addEventListener("keydown",e=>{
-  if(e.metaKey||e.ctrlKey||e.altKey||e.target.closest("textarea,input,select"))return;
+  const tg=e.target instanceof Element?e.target:document.body;
+  if(e.metaKey||e.ctrlKey||e.altKey||tg.closest("textarea,input,select"))return;
   const j=document.getElementById("journey").getBoundingClientRect();
   if(j.bottom<0||j.top>innerHeight)return;
   if(J.screen==="quiz"&&/^[1-5]$/.test(e.key)){jBody.querySelector(`[data-act="ans"][data-v="${e.key}"]`)?.click();return}
   const i=KEYS.indexOf(e.key.toUpperCase());
   if(e.key.length===1&&i>=0){const o=jBody.querySelectorAll(".j-opt")[i];if(o){e.preventDefault();o.click()}return}
-  if(e.key==="Enter"&&!e.target.closest("button,a,summary,label")){
+  if(e.key==="Enter"&&!tg.closest("button,a,summary,label")){
     if(J.screen==="intro"){go("goal");return}
     const n=document.getElementById("j-next");if(!n.hidden&&!n.disabled)n.click();
   }
