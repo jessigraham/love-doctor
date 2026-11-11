@@ -1,0 +1,1073 @@
+<title>Attachment Match</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: single reading column, three stacked tools (meter, self-check, field guide); meter leads */
+:root{
+  --bg:#f3f1f5; --surface:#ffffff; --ink:#221c2b; --muted:#665e70; --line:#ddd7e3;
+  --accent:#b23a5b; --accent-soft:#f6e3e9;
+  --secure:#2f7d6b; --anxious:#c4762b; --avoidant:#3d6aa8; --disorg:#7a4f9a;
+  --good:#2f7d6b; --mid:#c4932b; --bad:#b23a5b;
+  --display:"Young Serif", Georgia, "Times New Roman", serif;
+  --body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#17141c; --surface:#211d28; --ink:#efeaf3; --muted:#a79fb2; --line:#352f3e;
+  --accent:#e66f8f; --accent-soft:#3a2230;
+  --secure:#5cbca5; --anxious:#e39a54; --avoidant:#7ba3df; --disorg:#b48ad4;
+  --good:#5cbca5; --mid:#e0b552; --bad:#e66f8f; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#17141c; --surface:#211d28; --ink:#efeaf3; --muted:#a79fb2; --line:#352f3e;
+  --accent:#e66f8f; --accent-soft:#3a2230;
+  --secure:#5cbca5; --anxious:#e39a54; --avoidant:#7ba3df; --disorg:#b48ad4;
+  --good:#5cbca5; --mid:#e0b552; --bad:#e66f8f; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+.wrap{max-width:960px;margin:0 auto;padding-block:40px 64px;
+  padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px));
+  display:grid;gap:56px}
+h1,h2,h3{font-family:var(--display);font-weight:400;text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(2rem,5vw,3rem)}
+h2{font-size:1.75rem}
+h3{font-size:1.2rem}
+p{margin:0}
+.eyebrow{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.lede{color:var(--muted);max-width:60ch;font-size:1.06rem}
+header{display:grid;gap:14px}
+nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+nav a{color:var(--ink);text-decoration:none;font-weight:500;font-size:.92rem;padding:6px 14px;border:1px solid var(--line);border-radius:999px}
+nav a:hover,nav a:focus-visible{border-color:var(--accent);color:var(--accent);outline:none}
+section{display:grid;gap:20px;scroll-margin-top:16px}
+.sec-head{display:grid;gap:6px}
+
+/* style picker */
+.pickers{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.picker{display:grid;gap:10px;min-width:0}
+.picker-label{font-weight:600;font-size:.9rem;color:var(--muted)}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.chip{font:inherit;font-size:.92rem;font-weight:600;text-align:left;cursor:pointer;
+  padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);
+  display:flex;align-items:center;gap:8px;transition:border-color .15s, background .15s}
+.chip .dot{width:10px;height:10px;border-radius:50%;flex:none;background:var(--c)}
+.chip:hover{border-color:var(--c)}
+.chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chip[aria-pressed="true"]{border-color:var(--c);background:color-mix(in srgb, var(--c) 12%, var(--surface))}
+
+.result{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px;
+  display:grid;grid-template-columns:minmax(0,280px) minmax(0,1fr);gap:32px;align-items:start}
+.gauge{display:grid;justify-items:center;gap:4px}
+.gauge svg{width:100%;max-width:280px;height:auto}
+.score{font-family:var(--display);font-size:2.6rem;line-height:1;font-variant-numeric:tabular-nums}
+.verdict{font-weight:600;font-size:.95rem}
+.pair-title{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px}
+.pair-body{display:grid;gap:18px;min-width:0}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.cols h4{margin:0 0 6px;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.cols ul{margin:0;padding-left:18px;display:grid;gap:4px}
+.tip{background:var(--accent-soft);border-radius:10px;padding:14px 16px}
+.tip strong{color:var(--accent)}
+
+.best{display:grid;gap:10px}
+.best-row{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-size:.82rem;font-weight:600;padding:4px 10px;border-radius:999px;border:1px solid var(--c);color:var(--c)}
+
+/* reality check */
+.reality{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px;display:grid;gap:20px}
+.rc-qs{display:grid;gap:12px}
+.rc{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.rc p{flex:1 1 320px;min-width:0}
+.yn{display:flex;gap:6px}
+.yn label{position:relative}
+.yn input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.yn span{display:block;padding:6px 16px;border-radius:999px;border:1.5px solid var(--line);font-weight:600;font-size:.88rem;background:var(--bg)}
+.yn input:checked + span{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.yn input:focus-visible + span{outline:2px solid var(--accent);outline-offset:2px}
+.outlook{display:grid;gap:8px;padding:18px 20px;border-radius:12px;background:var(--bg);border-left:5px solid var(--line)}
+.outlook[data-level="good"]{border-left-color:var(--good)}
+.outlook[data-level="mid"]{border-left-color:var(--mid)}
+.outlook[data-level="low"]{border-left-color:var(--bad)}
+.outlook[data-level="safety"]{border-left-color:var(--bad);background:var(--accent-soft)}
+.outlook ul{margin:0;padding-left:18px;display:grid;gap:4px}
+.hotline{font-weight:700;user-select:all}
+
+.scene{margin:0;padding:14px 16px;border-left:3px solid var(--line);display:grid;gap:4px}
+.scene p{font-family:var(--display);font-size:1.02rem;line-height:1.45}
+
+/* partner reader */
+.reader{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px;display:grid;gap:24px}
+.trait-block{display:grid;gap:10px;min-width:0}
+.count{font-weight:400}
+.traits{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.trait{font:inherit;font-size:.9rem;text-align:left;cursor:pointer;padding:9px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);line-height:1.35}
+.trait:hover{border-color:var(--accent)}
+.trait:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.trait[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);font-weight:600}
+textarea{font:inherit;font-size:.95rem;width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);resize:vertical;min-height:120px}
+textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.hint{font-size:.83rem;color:var(--muted)}
+.reading{display:grid;gap:14px;padding:20px;border-radius:12px;background:var(--bg);border-left:5px solid var(--c, var(--line))}
+.reading-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:start;gap:10px}
+.reading h3{color:var(--c, var(--ink))}
+.conf{font-size:.8rem;font-weight:600;padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.reading .bar i{background:var(--bc)}
+.reader-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn[disabled]{opacity:.55;cursor:default}
+.safety{padding:14px 16px;border-radius:10px;background:var(--accent-soft);font-size:.93rem}
+.card dl{margin:0;display:grid;gap:10px;font-size:.93rem}
+.card dt{font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.card dd{margin:2px 0 0}
+
+/* guided journey */
+.journey{background:var(--surface);border:1.5px solid var(--ink);border-radius:20px;padding:28px;display:grid;gap:24px}
+.j-progress{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.j-progress li{display:grid;gap:6px;font-size:.78rem;font-weight:600;color:var(--muted)}
+.j-progress li::before{content:"";height:4px;border-radius:2px;background:var(--line)}
+.j-progress li.done::before,.j-progress li.now::before{background:var(--accent)}
+.j-progress li.now{color:var(--ink)}
+.j-body{display:grid;gap:18px;min-height:280px;align-content:start}
+.j-body h2{font-size:clamp(1.5rem,3.5vw,2rem)}
+.j-options{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.j-opt{font:inherit;text-align:left;cursor:pointer;padding:14px 16px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);display:grid;gap:4px;align-content:start}
+.j-opt strong{font-size:1rem}
+.j-opt span{font-size:.86rem;color:var(--muted);line-height:1.4}
+.j-opt:hover{border-color:var(--c, var(--accent))}
+.j-opt:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.j-opt[aria-pressed="true"]{border-color:var(--c, var(--accent));background:color-mix(in srgb, var(--c, var(--accent)) 12%, var(--surface))}
+.j-opt.big{padding:20px}
+.j-q{font-family:var(--display);font-size:clamp(1.2rem,3vw,1.5rem);line-height:1.3;max-width:40ch;min-height:3.9em}
+.j-scale{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.j-scale button{font:inherit;font-weight:700;width:48px;height:48px;border-radius:50%;cursor:pointer;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}
+.j-scale button:hover{border-color:var(--accent)}
+.j-scale button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.j-scale button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.linkish{font:inherit;font-size:.9rem;background:none;border:0;padding:0;color:var(--accent);cursor:pointer;text-decoration:underline;justify-self:start}
+.j-matches{display:grid;gap:10px}
+.j-match{display:grid;grid-template-columns:150px 1fr;gap:16px;padding:14px 16px;border-radius:12px;background:var(--bg);align-items:start}
+.j-match .who{display:grid;gap:6px}
+.j-match .who strong{color:var(--c)}
+.j-match .num{font-family:var(--display);font-size:1.6rem;line-height:1;font-variant-numeric:tabular-nums}
+.j-match p{font-size:.93rem;min-width:0}
+.j-profile{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.j-profile div{padding:14px 16px;border-radius:12px;background:var(--bg);display:grid;gap:4px;min-width:0}
+.j-profile b{font-family:var(--display);font-weight:400;font-size:1.15rem}
+.j-profile .wide{grid-column:1/-1}
+.j-links{display:flex;flex-wrap:wrap;gap:10px}
+.j-nav{display:flex;justify-content:space-between;gap:10px;border-top:1px solid var(--line);padding-top:18px}
+.divider{display:flex;align-items:center;gap:14px}
+.divider::after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* relationship goals */
+.goals{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px;display:grid;gap:24px}
+.goal-chips{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.goal-out{display:grid;gap:18px}
+.align{display:grid;gap:6px;padding:16px 18px;border-radius:12px;background:var(--bg);border-left:5px solid var(--ac)}
+.align h3{color:var(--ac)}
+.goal-out .cols p{font-size:.95rem}
+
+/* growth */
+.grow{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px;display:grid;gap:20px}
+.grow-tabs{grid-template-columns:repeat(4,1fr)}
+.grow-path{display:grid;gap:14px}
+.grow-path h3{color:var(--c)}
+.steps{margin:0;padding:0;list-style:none;counter-reset:step;display:grid;gap:10px}
+.steps li{counter-increment:step;display:grid;grid-template-columns:32px 1fr;gap:12px;align-items:start}
+.steps li::before{content:counter(step);display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:color-mix(in srgb, var(--c) 15%, var(--surface));color:var(--c);font-weight:700;font-size:.85rem}
+.grow-more{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.panel{display:grid;gap:10px;align-content:start;min-width:0;padding-top:16px;border-top:2px solid var(--ink)}
+.panel ul{margin:0;padding-left:18px;display:grid;gap:8px;font-size:.93rem}
+
+/* matrix */
+.matrix-wrap{overflow-x:auto}
+table{border-collapse:separate;border-spacing:4px;font-size:.88rem;min-width:520px;width:100%}
+th{font-weight:600;color:var(--muted);text-align:left;padding:6px 8px}
+td{text-align:center;padding:12px 6px;border-radius:8px;font-weight:600;font-variant-numeric:tabular-nums;cursor:pointer;
+  background:color-mix(in srgb, var(--h) 18%, var(--surface));color:var(--ink);border:1.5px solid transparent}
+td:hover,td.on{border-color:var(--h)}
+td:focus-visible{outline:2px solid var(--accent)}
+
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px;display:grid;gap:18px}
+.q{display:grid;gap:8px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.q:last-of-type{border-bottom:0}
+.scale{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.scale span{font-size:.78rem;color:var(--muted)}
+.scale label{position:relative}
+.scale input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.scale .pip{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;border:1.5px solid var(--line);font-weight:600;font-size:.9rem;background:var(--bg)}
+.scale input:checked + .pip{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.scale input:focus-visible + .pip{outline:2px solid var(--accent);outline-offset:2px}
+.quiz-out{display:grid;gap:10px;padding:18px;border-radius:12px;background:var(--bg)}
+.axes{display:grid;gap:8px}
+.axis{display:grid;grid-template-columns:110px 1fr 36px;gap:10px;align-items:center;font-size:.88rem}
+.bar{height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.btn{font:inherit;font-weight:600;cursor:pointer;justify-self:start;padding:10px 18px;border-radius:999px;border:0;background:var(--ink);color:var(--bg)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* field guide */
+.guide{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--c);border-radius:12px;padding:20px;display:grid;gap:12px;align-content:start;min-width:0}
+.card .aka{font-size:.82rem;color:var(--muted)}
+.card h4{margin:0;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.card ul{margin:4px 0 0;padding-left:18px;display:grid;gap:3px;font-size:.93rem}
+.card .feel{font-family:var(--display);font-size:1.02rem;color:var(--c)}
+
+.note{font-size:.85rem;color:var(--muted);max-width:70ch;border-top:1px solid var(--line);padding-top:20px}
+
+@media (max-width:720px){
+  .pickers,.result,.cols,.guide{grid-template-columns:1fr}
+  .result,.reality,.reader,.grow,.goals,.journey{padding:20px}
+  .j-progress li{font-size:0}
+  .j-match{grid-template-columns:1fr}
+  .j-profile{grid-template-columns:1fr}
+  .grow-tabs{grid-template-columns:1fr 1fr}
+  .grow-more{grid-template-columns:1fr}
+  .gauge{justify-self:center}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">A compatibility meter for how you love</span>
+    <h1>What's your attachment style, and who fits it?</h1>
+    <p class="lede">Pick your style and a partner's to see how the two tend to work together, where they clash, and what helps. Start with the guided journey: what you're looking for, your attachment style, who pairs best with you, and how to become more secure. Or jump straight to any tool below.</p>
+    <nav aria-label="Sections">
+      <a href="#journey">Guided journey</a>
+      <a href="#meter">Compatibility meter</a>
+      <a href="#goals">What you're looking for</a>
+      <a href="#check">Find your style</a>
+      <a href="#partner">Read your partner</a>
+      <a href="#grow">Grow toward secure</a>
+      <a href="#guide">The four styles</a>
+    </nav>
+  </header>
+
+  <section id="journey" class="journey" aria-label="Guided journey">
+    <ol class="j-progress" id="j-progress"></ol>
+    <div class="j-body" id="j-body" aria-live="polite"></div>
+    <div class="j-nav">
+      <button class="btn ghost" type="button" id="j-back">Back</button>
+      <button class="btn" type="button" id="j-next">Next</button>
+    </div>
+  </section>
+
+  <div class="divider"><span class="eyebrow">Explore every tool</span></div>
+
+  <section id="meter">
+    <div class="sec-head">
+      <h2>Compatibility meter</h2>
+      <p class="lede">Showing an example pairing. Change either side.</p>
+    </div>
+    <div class="pickers">
+      <div class="picker"><span class="picker-label">You are</span><div class="chips" id="pick-you" role="group" aria-label="Your style"></div></div>
+      <div class="picker"><span class="picker-label">They are</span><div class="chips" id="pick-them" role="group" aria-label="Their style"></div></div>
+    </div>
+
+    <div class="result" aria-live="polite">
+      <div class="gauge">
+        <svg viewBox="0 0 240 140" role="img" aria-labelledby="g-title">
+          <title id="g-title">Compatibility gauge</title>
+          <defs>
+            <linearGradient id="arc" x1="0" x2="1">
+              <stop offset="0" stop-color="var(--bad)"/><stop offset=".5" stop-color="var(--mid)"/><stop offset="1" stop-color="var(--good)"/>
+            </linearGradient>
+          </defs>
+          <path d="M20 120 A100 100 0 0 1 220 120" fill="none" stroke="var(--line)" stroke-width="16" stroke-linecap="round"/>
+          <path id="g-arc" d="M20 120 A100 100 0 0 1 220 120" fill="none" stroke="url(#arc)" stroke-width="16" stroke-linecap="round" pathLength="100" stroke-dasharray="100 100"/>
+          <g id="needle" style="transform-origin:120px 120px;transition:transform .6s cubic-bezier(.3,1.4,.5,1)">
+            <line x1="120" y1="120" x2="120" y2="36" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+          </g>
+          <circle cx="120" cy="120" r="7" fill="var(--ink)"/>
+          <text x="20" y="138" font-size="10" fill="var(--muted)" text-anchor="middle">0</text>
+          <text x="220" y="138" font-size="10" fill="var(--muted)" text-anchor="middle">100</text>
+        </svg>
+        <div class="score" id="score">0</div>
+        <div class="verdict" id="verdict"></div>
+      </div>
+      <div class="pair-body">
+        <div class="pair-title"><h3 id="pair-name"></h3></div>
+        <p id="pair-summary"></p>
+        <blockquote class="scene"><span class="picker-label">A typical moment</span><p id="pair-scene"></p></blockquote>
+        <div class="cols">
+          <div><h4>What works</h4><ul id="pair-works"></ul></div>
+          <div><h4>Where it gets hard</h4><ul id="pair-hard"></ul></div>
+        </div>
+        <div class="tip"><strong>What helps: </strong><span id="pair-tip"></span></div>
+        <div class="best">
+          <span class="picker-label" id="best-label"></span>
+          <div class="best-row" id="best-row"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reality" id="reality">
+      <div class="sec-head">
+        <span class="eyebrow">Already together?</span>
+        <h3 id="rc-title">Check in on the relationship you're in</h3>
+        <p class="lede" style="font-size:.95rem">The pairing score is a starting point. What decides whether it can work is how the two of you actually handle it. Answer these about your relationship right now.</p>
+      </div>
+      <div class="rc-qs" id="rc-qs"></div>
+      <div class="outlook" id="outlook" data-level="none">
+        <span class="picker-label">Your outlook</span>
+        <h3 id="ol-title">Answer all five to see it</h3>
+        <p id="ol-text">Be honest. Nobody sees these answers but you, and nothing is saved.</p>
+      </div>
+    </div>
+
+    <div class="sec-head"><h3>Every pairing at a glance</h3><p class="lede" style="font-size:.95rem">Tap a cell to load it into the meter.</p></div>
+    <div class="matrix-wrap"><table id="matrix"></table></div>
+  </section>
+
+  <section id="goals">
+    <div class="sec-head">
+      <h2>What are you looking for?</h2>
+      <p class="lede">Two people can be a great attachment match and still want different things. Pick what you want right now and what they want (or what you think they want).</p>
+    </div>
+    <div class="goals">
+      <div class="pickers">
+        <div class="picker"><span class="picker-label">You want</span><div class="chips goal-chips" id="goal-you" role="group" aria-label="What you want"></div></div>
+        <div class="picker"><span class="picker-label">They want</span><div class="chips goal-chips" id="goal-them" role="group" aria-label="What they want"></div></div>
+      </div>
+      <div class="goal-out">
+        <div class="align" id="goal-align"><span class="picker-label">Goal alignment</span><h3 id="ga-title"></h3><p id="ga-text"></p></div>
+        <div class="cols">
+          <div><h4 id="gy-name"></h4><p id="gy-desc"></p></div>
+          <div><h4 id="gy-style-h"></h4><p id="gy-style"></p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="check">
+    <div class="sec-head">
+      <h2>Find your style</h2>
+      <p class="lede">Twelve statements about how you act in close relationships. Rate each from 1 (not me at all) to 5 (very much me). Think about how you usually are, not your best day.</p>
+    </div>
+    <form class="quiz" id="quiz">
+      <div id="questions"></div>
+      <button class="btn" type="submit">See my style</button>
+      <div class="quiz-out" id="quiz-out" hidden>
+        <h3 id="quiz-result"></h3>
+        <p id="quiz-text"></p>
+        <div class="axes">
+          <div class="axis"><span>Anxiety</span><div class="bar"><i id="bar-anx"></i></div><span id="num-anx"></span></div>
+          <div class="axis"><span>Avoidance</span><div class="bar"><i id="bar-avo"></i></div><span id="num-avo"></span></div>
+        </div>
+        <button class="btn" type="button" id="use-result">Use this in the meter</button>
+      </div>
+    </form>
+  </section>
+
+  <section id="partner">
+    <div class="sec-head">
+      <h2>Read your partner</h2>
+      <p class="lede">Tick everything that sounds like them, then describe how they act in your own words. You'll get a best guess at their attachment style and how to approach them. You're seeing them through your own lens, so treat this as a starting point, not a verdict.</p>
+    </div>
+    <div class="reader">
+      <div class="trait-block">
+        <span class="picker-label">Sounds like them <span id="trait-count" class="count"></span></span>
+        <div class="traits" id="traits" role="group" aria-label="Partner traits"></div>
+      </div>
+      <div class="trait-block">
+        <label class="picker-label" for="partner-text">Describe how they operate</label>
+        <textarea id="partner-text" rows="5" placeholder="For example: When we argue they leave the room and won't talk until the next day. They're sweet over text when we're apart, but after a weekend together they get distant and busy. They've said they've never really felt close to anyone."></textarea>
+        <span class="hint">The more specific, the better. What do they do when you're upset? When things are going well? When you ask for more time together? Nothing you type is saved.</span>
+      </div>
+      <div class="reading" id="reading" data-state="empty">
+        <div class="reading-head">
+          <div>
+            <span class="picker-label" id="rd-source">Quick read</span>
+            <h3 id="rd-title">Pick a few traits or write a description</h3>
+          </div>
+          <span class="conf" id="rd-conf" hidden></span>
+        </div>
+        <p id="rd-summary">Your read updates as you go.</p>
+        <div class="axes" id="rd-bars"></div>
+        <div class="cols" id="rd-detail" hidden>
+          <div><h4>What points there</h4><ul id="rd-evidence"></ul></div>
+          <div><h4>How to approach them</h4><ul id="rd-approach"></ul></div>
+        </div>
+        <div class="safety" id="rd-safety" hidden>Some of what you described, like fear, control, or being cut off from people, goes beyond attachment style. Please talk to someone who can help. In the US, the National Domestic Violence Hotline is free and confidential, 24/7: <span class="hotline">1-800-799-7233</span>, or text <span class="hotline">START</span> to <span class="hotline">88788</span>.</div>
+        <div class="reader-actions">
+          <button class="btn" type="button" id="deep-btn" hidden>Get a deeper read from Claude</button>
+          <button class="btn ghost" type="button" id="deep-stop" hidden>Stop</button>
+          <button class="btn ghost" type="button" id="use-partner" hidden>Use as their style in the meter</button>
+          <span class="hint" id="deep-status"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="grow">
+    <div class="sec-head">
+      <h2>Grow toward secure</h2>
+      <p class="lede">Attachment styles aren't a life sentence. Researchers call it <em>earned security</em>: adults who started out anxious, avoidant, or disorganized and became secure. Pick a starting point to see the path from there.</p>
+    </div>
+    <div class="grow">
+      <div class="chips grow-tabs" id="grow-tabs" role="group" aria-label="Starting style"></div>
+      <div class="grow-path" id="grow-path">
+        <h3 id="grow-title"></h3>
+        <ol class="steps" id="grow-steps"></ol>
+        <div class="tip"><strong>Try this week: </strong><span id="grow-week"></span></div>
+      </div>
+    </div>
+    <div class="grow-more">
+      <article class="panel">
+        <h3>How people become secure</h3>
+        <ul>
+          <li><strong>A steady relationship.</strong> A secure partner, close friend, or mentor who stays consistent slowly rewires what you expect from closeness.</li>
+          <li><strong>Therapy.</strong> Attachment-focused approaches like Emotionally Focused Therapy (EFT), schema therapy, and trauma-informed work are built for this.</li>
+          <li><strong>Making sense of your story.</strong> People who can tell a clear, honest story about their childhood, even a hard one, tend to be more secure as adults.</li>
+          <li><strong>Practice in small moments.</strong> Every time you ask directly instead of testing, or stay instead of fleeing, it gets a little easier.</li>
+        </ul>
+      </article>
+      <article class="panel">
+        <h3>Choosing a better match</h3>
+        <ul>
+          <li><strong>Look for consistency.</strong> They text when they say they will, make plans, and their actions match their words.</li>
+          <li><strong>Notice how they handle your feelings.</strong> A good match gets curious when you're upset instead of defensive or distant.</li>
+          <li><strong>Watch how they repair.</strong> Everyone fights. What matters is whether they apologize and come back.</li>
+          <li><strong>Question the spark.</strong> If kind, steady people feel boring, that may be your nervous system missing the anxiety, not missing chemistry.</li>
+        </ul>
+      </article>
+      <article class="panel">
+        <h3>Building security as a couple</h3>
+        <ul>
+          <li><strong>Name the cycle, not the person.</strong> “We're doing the chase-and-pull-away thing again” makes it a shared problem.</li>
+          <li><strong>Agree on a repair ritual.</strong> A phrase or gesture that means “I want to fix this,” used by whoever cools down first.</li>
+          <li><strong>Hold a weekly check-in.</strong> What felt good this week, what felt off, and one thing each of you needs.</li>
+          <li><strong>Get outside help early.</strong> Couples therapy works best before resentment sets in, not as a last resort.</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section id="guide">
+    <div class="sec-head">
+      <h2>The four styles</h2>
+      <p class="lede">Attachment theory comes from John Bowlby and Mary Ainsworth's work on how children bond with caregivers. Researchers later found adults carry similar patterns into romance. Most people sit somewhere on two scales: how much they fear losing closeness (anxiety) and how much they avoid it (avoidance).</p>
+    </div>
+    <div class="guide" id="cards"></div>
+  </section>
+
+  <p class="note">This is a tool for self-reflection, not a diagnosis. Attachment styles are tendencies, not fixed labels, and they can shift over time. Many people move toward "earned security" through supportive relationships or therapy. Scores here are general tendencies drawn from attachment research; any two people who are self-aware and willing to work on it can build something good.</p>
+</div>
+
+<script>
+const STYLES = {
+  secure:   {name:"Secure", aka:"Comfortable with closeness and with independence", c:"--secure",
+    feel:"“I can count on you, and you can count on me.”",
+    about:"Trusts easily, communicates needs directly, and stays steady during conflict. About half of adults fall here.",
+    signs:["Says what they need without games","Handles space without panic","Repairs quickly after fights","Feels worthy of love"],
+    growth:"Keep your patience from turning into over-functioning for a partner who is struggling."},
+  anxious:  {name:"Anxious", aka:"Also called anxious-preoccupied", c:"--anxious",
+    feel:"“Do you still love me? Are we okay?”",
+    about:"Craves closeness and fears it slipping away. Very attuned to a partner's moods, sometimes to the point of reading rejection into silence.",
+    signs:["Checks the phone a lot when waiting","Needs frequent reassurance","Overthinks small changes in tone","Can lose themselves in the relationship"],
+    growth:"Build ways to calm yourself that do not depend on a reply, and ask for reassurance directly rather than through protest."},
+  avoidant: {name:"Avoidant", aka:"Also called dismissive-avoidant", c:"--avoidant",
+    feel:"“I'm fine on my own. I don't need anyone.”",
+    about:"Values independence and feels crowded when things get too close. Tends to shut down or pull away when emotions run high.",
+    signs:["Goes quiet during hard talks","Keeps parts of life separate","Feels smothered by needs","Focuses on a partner's flaws as closeness grows"],
+    growth:"Notice the urge to withdraw and name it out loud. Saying “I need an hour, then let's talk” keeps the door open."},
+  disorg:   {name:"Disorganized", aka:"Also called fearful-avoidant", c:"--disorg",
+    feel:"“Come closer. No, wait, go away.”",
+    about:"Wants closeness and fears it at the same time. Often linked to early relationships that felt both comforting and unsafe, so love can feel confusing.",
+    signs:["Swings between clingy and distant","Struggles to trust kindness","Strong reactions that are hard to explain","Expects to get hurt"],
+    growth:"This one responds well to therapy. Steady, predictable relationships slowly teach the body that closeness can be safe."}
+};
+const ORDER = ["secure","anxious","avoidant","disorg"];
+Object.assign(STYLES.secure,{
+  love:"Shows up consistently. Affection is steady rather than intense.",
+  conflict:"Stays in the conversation, listens, and looks for a fix.",
+  triggers:"Dishonesty and repeated broken promises.",
+  needs:"Honesty, respect, and a partner who meets them halfway.",
+  approach:"Match their directness. Say what you need plainly; they can handle it."});
+Object.assign(STYLES.anxious,{
+  love:"Attentive and affectionate. Generous with time, texts, and words.",
+  conflict:"Pursues. Wants it resolved right now, and may escalate if they feel shut out.",
+  triggers:"Slow replies, sudden distance, vague plans, a change in tone.",
+  needs:"Consistency, clear plans, and reassurance before they have to ask for it.",
+  approach:"Be predictable. Say when you'll be back in touch and follow through. Reassure before they ask."});
+Object.assign(STYLES.avoidant,{
+  love:"Through actions more than words: fixing, planning, providing, being reliable.",
+  conflict:"Withdraws. Goes quiet, changes the subject, or leaves to cool off.",
+  triggers:"Feeling controlled, criticized, or pushed to talk about feelings on the spot.",
+  needs:"Space without punishment, low pressure, and time to process.",
+  approach:"Give space without punishing it. Bring up hard topics side by side, like on a walk or in the car, rather than face to face."});
+Object.assign(STYLES.disorg,{
+  love:"Deeply and intensely, in waves.",
+  conflict:"Can swing between pursuing and shutting down, sometimes in the same argument.",
+  triggers:"Signs of rejection, and also signs of getting too close.",
+  needs:"Predictability, patience, and a partner who stays calm when they can't.",
+  approach:"Stay steady when they swing. Don't chase or retaliate. Encourage support from a therapist; healing this isn't your job alone."});
+
+// unordered pairs, key sorted by ORDER index
+const PAIRS = {
+  "secure|secure":   {score:95, verdict:"Strong match", summary:"Two people who say what they mean and trust each other's word. Conflict happens, but it gets resolved instead of building up.",
+    works:["Direct, low-drama communication","Room for both closeness and space","Quick repair after arguments"],
+    hard:["Can get comfortable and stop putting in effort","Outside stress can still test the bond"],
+    tip:"Keep choosing each other on purpose. Secure does not mean automatic."},
+  "secure|anxious":  {score:80, verdict:"Good match", summary:"The secure partner's consistency gives the anxious partner the reassurance they look for. Over time, many anxious people grow more secure in this pairing.",
+    works:["Steady replies calm the worry","Anxious partner brings warmth and devotion","Secure partner models calm conflict"],
+    hard:["Secure partner may tire of repeated reassurance","Anxious partner may test the relationship"],
+    tip:"The anxious partner names the fear (“I'm feeling insecure”) instead of acting it out. The secure partner keeps showing up the same way."},
+  "secure|avoidant": {score:74, verdict:"Good match", summary:"The secure partner doesn't chase or take distance personally, which makes it safer for the avoidant partner to come closer at their own pace.",
+    works:["Space is given without punishment","Secure partner doesn't escalate","Avoidant partner feels less trapped"],
+    hard:["Secure partner may feel lonely at times","Avoidant partner may still hold back emotionally"],
+    tip:"Agree on small, regular moments of connection so closeness feels predictable rather than demanding."},
+  "secure|disorg":   {score:68, verdict:"Workable with effort", summary:"A secure partner can be a stabilizing presence, but the push-pull of disorganized attachment takes patience to ride out.",
+    works:["Consistency slowly builds trust","Secure partner doesn't mirror the chaos","Real growth is possible for both"],
+    hard:["Hot-and-cold swings are draining","Secure partner may slip into caretaker mode"],
+    tip:"Predictability is the medicine. Therapy for the disorganized partner, and boundaries for the secure one, help a lot."},
+  "anxious|anxious": {score:52, verdict:"Mixed", summary:"Lots of closeness and understanding, since both want the same thing. The risk is two worried people feeding each other's fears.",
+    works:["Both value togetherness","Deep empathy for each other's worries","Lots of affection"],
+    hard:["Small slights can spiral for both","Jealousy and reassurance loops","Hard to calm down at the same time"],
+    tip:"Each person needs their own ways to self-soothe, so you aren't both reaching for the other at the same moment."},
+  "anxious|avoidant":{score:30, verdict:"Often a struggle", summary:"The classic “anxious-avoidant trap.” One pursues, the other retreats, and each reaction makes the other's worse. The pull can feel intense, which people mistake for chemistry.",
+    works:["Strong initial attraction","Each has what the other is learning","Can grow a lot with real work"],
+    hard:["Chase-and-withdraw cycle","Anxious partner feels unloved","Avoidant partner feels smothered"],
+    tip:"Name the cycle together as the shared problem. Couples therapy built on attachment (like EFT) is designed for exactly this."},
+  "anxious|disorg":  {score:36, verdict:"Often a struggle", summary:"The anxious partner wants steady closeness; the disorganized partner offers it and then pulls back. This can deepen the anxious partner's fears.",
+    works:["Both feel emotions deeply","Moments of intense connection","Shared understanding of fear of loss"],
+    hard:["Unpredictability feeds anxiety","Conflict escalates fast","Hard to feel safe for long"],
+    tip:"Both partners benefit from individual support before or alongside the relationship."},
+  "avoidant|avoidant":{score:45, verdict:"Mixed", summary:"Calm and low-conflict on the surface, with lots of independence. Underneath, nobody reaches first, so the relationship can drift.",
+    works:["Respect for each other's space","Little clinginess or jealousy","Practical, easygoing routines"],
+    hard:["Emotional distance grows quietly","Problems get avoided, not solved","Can feel more like roommates"],
+    tip:"Schedule real check-ins. It feels awkward, but it keeps the emotional side from going unspoken."},
+  "avoidant|disorg": {score:34, verdict:"Often a struggle", summary:"When the disorganized partner reaches out, the avoidant partner tends to pull away, which confirms the disorganized partner's fear of being let down.",
+    works:["Both understand the need for space","Avoidant steadiness can feel safe at first"],
+    hard:["Withdrawal triggers panic","Few people initiating repair","Trust is slow to build"],
+    tip:"Make it explicit when space is coming and when you'll be back. Ambiguity is the hardest part here."},
+  "disorg|disorg":   {score:24, verdict:"High risk", summary:"Two people who both want and fear closeness. There can be real understanding, but the push-pull doubles and things can get volatile.",
+    works:["Deep recognition of each other's pain","Intense moments of closeness"],
+    hard:["Mirrored hot-and-cold cycles","Conflict can feel unsafe","Hard for either to be the steady one"],
+    tip:"Individual therapy for both is strongly recommended. Safety first, then closeness."}
+};
+const SCENES={
+  "secure|secure":"One of you had a rough day and snapped. Twenty minutes later: “Sorry, that wasn't about you.” “I know. Want to talk about it?”",
+  "secure|anxious":"Three hours with no reply and the anxious partner starts to spiral. Then a text: “Slammed at work, call you at 7.” The phone rings at 7.",
+  "secure|avoidant":"After a close weekend the avoidant partner wants a night alone. The secure partner says “Enjoy it” and means it, so the avoidant partner comes back sooner.",
+  "secure|disorg":"The disorganized partner picks a fight right after a great date. The secure partner doesn't take the bait: “I think something scared you. I'm still here.”",
+  "anxious|anxious":"One sends a slightly short text. The other reads it as anger and replies short too. Both spend the evening sure the other is upset.",
+  "anxious|avoidant":"“We need to talk.” The anxious partner wants to settle it tonight. The avoidant partner says “I'm tired” and turns on the TV. Both feel more alone than before.",
+  "anxious|disorg":"Saturday is perfect. By Monday the disorganized partner has gone distant, and the anxious partner keeps texting to work out what went wrong.",
+  "avoidant|avoidant":"Something has bothered both of them for months. Neither brings it up, and dinner conversation stays on logistics.",
+  "avoidant|disorg":"The disorganized partner reaches out after a hard day. The avoidant partner replies “ok” hours later, which lands as proof they don't care.",
+  "disorg|disorg":"A small disagreement about plans becomes “maybe we should just break up,” then an intense makeup a day later. Then it happens again."
+};
+const pairKey=(a,b)=>ORDER.indexOf(a)<=ORDER.indexOf(b)?`${a}|${b}`:`${b}|${a}`;
+const scoreColor=s=>s>=70?"var(--good)":s>=45?"var(--mid)":"var(--bad)";
+
+let you="anxious", them="avoidant";
+
+function chips(el, current, onPick){
+  el.innerHTML="";
+  ORDER.forEach(k=>{
+    const b=document.createElement("button");
+    b.type="button";b.className="chip";b.id=`${el.id}-${k}`;
+    b.style.setProperty("--c",`var(${STYLES[k].c})`);
+    b.setAttribute("aria-pressed",k===current);
+    b.innerHTML=`<span class="dot"></span>${STYLES[k].name}`;
+    b.onclick=()=>onPick(k);
+    el.appendChild(b);
+  });
+}
+function li(arr){return arr.map(t=>`<li>${t}</li>`).join("")}
+
+function render(){
+  chips(document.getElementById("pick-you"),you,k=>{you=k;render()});
+  chips(document.getElementById("pick-them"),them,k=>{them=k;render()});
+  const p=PAIRS[pairKey(you,them)];
+  document.getElementById("needle").style.transform=`rotate(${-90+p.score*1.8}deg)`;
+  const sc=document.getElementById("score");sc.textContent=p.score;sc.style.color=scoreColor(p.score);
+  const v=document.getElementById("verdict");v.textContent=p.verdict;v.style.color=scoreColor(p.score);
+  document.getElementById("pair-name").textContent=`${STYLES[you].name} + ${STYLES[them].name}`;
+  document.getElementById("pair-summary").textContent=p.summary;
+  document.getElementById("pair-scene").textContent=SCENES[pairKey(you,them)];
+  document.getElementById("pair-works").innerHTML=li(p.works);
+  document.getElementById("pair-hard").innerHTML=li(p.hard);
+  document.getElementById("pair-tip").textContent=p.tip;
+  // best matches for "you"
+  const ranked=ORDER.map(k=>({k,s:PAIRS[pairKey(you,k)].score})).sort((a,b)=>b.s-a.s);
+  document.getElementById("best-label").textContent=`Best matches for ${STYLES[you].name.toLowerCase()}, ranked`;
+  document.getElementById("best-row").innerHTML=ranked.map((r,i)=>
+    `<span class="tag" style="--c:var(${STYLES[r.k].c})">${i+1}. ${STYLES[r.k].name} · ${r.s}</span>`).join("");
+  renderMatrix();
+  renderGrowth();
+  renderGoals();
+  document.getElementById("rc-title").textContent=`In a ${STYLES[you].name.toLowerCase()} + ${STYLES[them].name.toLowerCase()} relationship right now?`;
+  renderOutlook();
+}
+
+// relationship goals; level = how much commitment the goal implies, used to judge alignment
+const GOALS={
+  marriage:{name:"Marriage and family",level:5,desc:"Building a life together: a shared home, finances, maybe children.",
+    s:{secure:"You can talk about timelines and values early without making it heavy.",anxious:"Don't rush milestones to quiet the worry. A ring doesn't fix insecurity.",avoidant:"Big commitments can set off the urge to run. Talk through what scares you before, not after.",disorg:"Choose someone patient and steady, and consider premarital counseling."}},
+  longterm:{name:"Long-term partner",level:4,desc:"A committed, exclusive relationship you want to last, with or without marriage.",
+    s:{secure:"A natural fit. You can build trust step by step.",anxious:"What you want most. Go slow early so your sense of security comes from their actions, not your hopes.",avoidant:"Possible and rewarding, but expect the urge to pull back as things deepen, and plan for it.",disorg:"Worth working toward, ideally with support, since closeness can set off old alarms."}},
+  friends:{name:"Friends first",level:3,desc:"Starting as friends and letting romance grow slowly, if it does.",
+    s:{secure:"A good foundation. Just be clear when your feelings change.",anxious:"Great for building trust, but say how you feel rather than waiting for signs.",avoidant:"Often the most comfortable way in for you, since closeness builds gradually.",disorg:"The slower pace can help closeness feel safe."}},
+  open:{name:"Open or non-traditional",level:3,desc:"Ethical non-monogamy or another setup everyone involved has agreed to.",
+    s:{secure:"Works best when everyone involved is secure and the agreements are very clear.",anxious:"Jealousy and comparison can run high. Make sure you're choosing this, not agreeing to it to keep someone.",avoidant:"Be honest with yourself about whether it's about freedom or about keeping distance.",disorg:"Lots of moving parts and uncertainty. Go carefully and put stability first."}},
+  casual:{name:"Casual dating",level:2,desc:"Seeing people without exclusivity or big expectations.",
+    s:{secure:"Works fine as long as you're honest about what it is.",anxious:"Hard for many anxious people, since an undefined status feeds worry. Be honest if you're hoping it becomes more.",avoidant:"Comfortable for you, which is worth noticing. Is it what you want, or just what feels safe?",disorg:"Can feel safe and painful at the same time. Watch for using it to stay half in."}},
+  exploring:{name:"Not sure yet",level:2,desc:"Open to meeting people and figuring out what you want.",
+    s:{secure:"A healthy place to be. Just say so to the people you date.",anxious:"Watch for taking on whatever the other person wants.",avoidant:"Fine for now. Notice if “not sure” becomes permanent.",disorg:"A good time to learn your patterns before going deep with anyone."}},
+  short:{name:"Short-term fling",level:1,desc:"Something fun with a clear end: a summer, a trip, a season.",
+    s:{secure:"Easy for you to enjoy and let go of.",anxious:"Attachment can form fast. Decide ahead of time how you'll handle the ending.",avoidant:"Low-risk closeness. Fine, unless every relationship ends up this way.",disorg:"Endings can hit harder than you expect. Keep support around you."}},
+  healing:{name:"Taking a break",level:0,desc:"Stepping back from dating to recover or focus on yourself.",
+    s:{secure:"Taking time is a secure move in itself.",anxious:"Hard but valuable. Learning you're okay on your own is the core work.",avoidant:"Make sure it's rest and not a wall.",disorg:"A good time to start therapy and build steady routines."}}
+};
+const GOAL_ORDER=["longterm","marriage","friends","casual","short","open","exploring","healing"];
+let goalYou="longterm", goalThem="casual";
+function goalChips(el,current,onPick){
+  el.innerHTML="";
+  GOAL_ORDER.forEach(k=>{
+    const b=document.createElement("button");
+    b.type="button";b.className="chip";b.id=`${el.id}-${k}`;b.style.setProperty("--c","var(--accent)");
+    b.setAttribute("aria-pressed",k===current);b.textContent=GOALS[k].name;
+    b.onclick=()=>onPick(k);el.appendChild(b);
+  });
+}
+function goalAlignment(a,b){
+  if(a===b) return ["good","Aligned","You want the same thing. That's rarer than it should be, and it removes a big source of hurt."];
+  if(a==="healing"||b==="healing") return ["bad","Wrong timing","One of you isn't in a place to date right now. Pushing forward usually means one person gets hurt. Respect the pause."];
+  if(a==="open"||b==="open") return ["mid","Different structures","This needs an explicit, honest conversation about exclusivity before anyone gets more invested. Neither person should agree just to keep the other."];
+  if(a==="exploring"||b==="exploring") return ["mid","Still taking shape","One of you is still figuring it out. That's okay early on. Check in again in a few weeks instead of assuming."];
+  const gap=Math.abs(GOALS[a].level-GOALS[b].level);
+  if(gap<=1) return ["good","Close enough to talk through","You're in the same neighborhood. Talk about timelines so small differences don't grow into resentment."];
+  if(gap===2) return ["mid","A real gap","One of you wants noticeably more commitment. If that doesn't move in a few months, it usually becomes the main source of conflict."];
+  return ["bad","Want different things","This is a big mismatch. Hoping the other person will change their mind is the most common way people stay stuck. Believe what they tell you."];
+}
+function renderGoals(){
+  goalChips(document.getElementById("goal-you"),goalYou,k=>{goalYou=k;renderGoals()});
+  goalChips(document.getElementById("goal-them"),goalThem,k=>{goalThem=k;renderGoals()});
+  const [lvl,title,text]=goalAlignment(goalYou,goalThem);
+  const al=document.getElementById("goal-align");
+  al.style.setProperty("--ac",lvl==="good"?"var(--good)":lvl==="mid"?"var(--mid)":"var(--bad)");
+  document.getElementById("ga-title").textContent=title;
+  document.getElementById("ga-text").textContent=text;
+  const g=GOALS[goalYou];
+  document.getElementById("gy-name").textContent=g.name;
+  document.getElementById("gy-desc").textContent=g.desc;
+  document.getElementById("gy-style-h").textContent=`For you as ${STYLES[you].name.toLowerCase()}`;
+  document.getElementById("gy-style").textContent=g.s[you];
+}
+
+// growth path toward earned security, keyed to "you"
+const GROW={
+  secure:{title:"Staying secure, and helping a partner get there",
+    steps:["Keep doing the basics: say what you need, follow through, and repair quickly.","Watch for over-functioning. You can't be secure for two people.","Get curious about a partner's insecure habits instead of taking them personally.","Notice when stress pushes you toward anxious or avoidant habits. Everyone has them under pressure."],
+    week:"Ask your partner something you've never asked: “What makes you feel most loved by me?”"},
+  anxious:{title:"From anxious toward secure",
+    steps:["Learn your spiral. Write down what sets it off, like a slow reply or a change in tone, so you can catch it early.","Calm yourself before you reach out. Breathe, walk, call a friend, wait 20 minutes, then decide what to send.","Swap protest behavior (going cold, testing, making them jealous) for a direct ask: “I'm feeling insecure. Can you reassure me?”","Build a life that's yours: friends, hobbies, goals. A relationship should add to your life, not be all of it.","Notice when you're drawn to someone who keeps you guessing. That pull is often anxiety, not chemistry."],
+    week:"Next time you want to double-text, set a 20-minute timer. When it ends, write what you actually need in one sentence."},
+  avoidant:{title:"From avoidant toward secure",
+    steps:["Notice the exit urge: picking at their flaws, suddenly getting busy, wanting out. Name it instead of acting on it.","Say when you'll be back. “I need an hour, then let's talk” gives you space without disappearing.","Practice small disclosures. One true feeling a day, out loud, even a minor one.","Remember that needing people isn't weakness. Independence and closeness can exist together.","Watch for the “phantom ex”: idealizing someone from the past so nobody now measures up."],
+    week:"Once this week, when you feel like pulling back, say “I'm feeling crowded, it's not about you,” and stay in the room five more minutes."},
+  disorg:{title:"From disorganized toward secure",
+    steps:["Work with a therapist, ideally a trauma-informed one. This style often has roots that are hard to untangle alone.","Learn your body's alarm. A racing heart or an urge to run is a signal, not a fact about your partner.","Slow down big reactions. Pause before ending things, accusing, or deciding anything in the heat of the moment.","Choose steady people and steady routines. Predictability teaches your nervous system that closeness can be safe.","Be patient with yourself. Earned security is real, and people with this style do get there."],
+    week:"Keep a short log. Each time you swing toward clinging or pushing away, note what happened just before. Look for the pattern at the end of the week."}
+};
+function renderGrowth(){
+  chips(document.getElementById("grow-tabs"),you,k=>{you=k;render()});
+  const g=GROW[you], path=document.getElementById("grow-path");
+  path.style.setProperty("--c",`var(${STYLES[you].c})`);
+  document.getElementById("grow-title").textContent=g.title;
+  document.getElementById("grow-steps").innerHTML=li(g.steps);
+  document.getElementById("grow-week").textContent=g.week;
+}
+
+// reality check for people already in this pairing
+const RC=[
+  {id:"pattern", t:"Do you both see the pattern between you, and can you talk about it without it turning into a fight?", good:"yes"},
+  {id:"willing", t:"Is your partner willing to work on it with you (honest talks, reading up, therapy)?", good:"yes"},
+  {id:"repair",  t:"Over the last few months, has it been getting easier to make up after a conflict?", good:"yes"},
+  {id:"edge",    t:"Do you often feel anxious, small, or like you're walking on eggshells around them?", good:"no"},
+  {id:"safe",    t:"Have you ever felt afraid of them, controlled, or cut off from friends, family, or money?", good:"no", safety:true}
+];
+document.getElementById("rc-qs").innerHTML=RC.map(q=>`<div class="rc"><p>${q.t}</p>
+  <div class="yn" role="radiogroup" aria-label="${q.t}">
+    <label><input type="radio" name="rc-${q.id}" id="rc-${q.id}-yes" value="yes"><span>Yes</span></label>
+    <label><input type="radio" name="rc-${q.id}" id="rc-${q.id}-no" value="no"><span>No</span></label>
+  </div></div>`).join("");
+document.getElementById("rc-qs").addEventListener("change",renderOutlook);
+
+function renderOutlook(){
+  const ans=RC.map(q=>document.querySelector(`input[name="rc-${q.id}"]:checked`)?.value);
+  const box=document.getElementById("outlook"), T=document.getElementById("ol-title"), X=document.getElementById("ol-text");
+  const unsafe=ans[4]==="yes";
+  if(unsafe){
+    box.dataset.level="safety";
+    T.textContent="This is about safety, not attachment style";
+    X.innerHTML=`Fear, control, and isolation are signs of an unhealthy or abusive relationship, and no attachment style explains or excuses them. You deserve to talk to someone who can help you think it through. In the US, the National Domestic Violence Hotline is free and confidential, 24/7: <span class="hotline">1-800-799-7233</span>, or text <span class="hotline">START</span> to <span class="hotline">88788</span>. If you're in danger right now, call 911.`;
+    return;
+  }
+  const answered=ans.filter(Boolean).length;
+  if(answered<RC.length){
+    box.dataset.level="none";
+    T.textContent=`Answer all five to see it (${answered} of ${RC.length})`;
+    X.textContent="Be honest. Nobody sees these answers but you, and nothing is saved.";
+    return;
+  }
+  const good=RC.slice(0,3).filter((q,i)=>ans[i]==="yes").length;
+  const onEdge=ans[3]==="yes";
+  const s=PAIRS[pairKey(you,them)].score, hardPair=s<45;
+  const pairNote=hardPair
+    ? `On paper, ${STYLES[you].name.toLowerCase()} + ${STYLES[them].name.toLowerCase()} is one of the harder pairings (${s}/100).`
+    : `Your pairing scores ${s}/100, which gives you a decent foundation.`;
+  if(good>=2 && !onEdge){
+    box.dataset.level="good";
+    T.textContent=hardPair?"Hard pairing, good signs":"Worth investing in";
+    X.innerHTML=`${pairNote} ${hardPair?"But you're doing the things that let hard pairings work: you see the pattern, you're both trying, and repair is improving.":"And you're both showing up for it."}<ul><li>Keep naming the cycle as the shared problem, not each other.</li><li>${hardPair?"A couples therapist trained in attachment (EFT) can speed this up a lot.":"Keep checking in, especially during stressful seasons."}</li></ul>`;
+  } else if(good===0 || (onEdge && good<2)){
+    box.dataset.level="low";
+    T.textContent="Low chance of this working as it is";
+    X.innerHTML=`${pairNote} More importantly, the things that make a relationship workable aren't there right now${onEdge?", and you're spending a lot of time on edge":""}. That doesn't make either of you a bad person. It means the current pattern is costing you.<ul><li>Ask yourself: if nothing changes in a year, is this what I want?</li><li>Raise it directly once, clearly. Notice whether they lean in or brush it off.</li><li>Talk it through with a therapist or someone you trust who isn't in the middle of it.</li><li>Leaving a relationship that isn't working is a valid choice, not a failure.</li></ul>`;
+  } else {
+    box.dataset.level="mid";
+    T.textContent="Could go either way";
+    X.innerHTML=`${pairNote} Some of the foundations are there and some aren't${onEdge?", and feeling on edge is a signal worth taking seriously":""}. What happens next depends on whether both of you put in effort.<ul><li>Pick the one answer above you most want to change, and say it out loud to your partner.</li><li>Give it a real timeframe, like three months, and check honestly whether things moved.</li><li>If you're the only one working on it, that tells you something.</li></ul>`;
+  }
+}
+
+function renderMatrix(){
+  const t=document.getElementById("matrix");
+  let h=`<tr><th scope="col"><span style="font-weight:400">You ↓ / They →</span></th>${ORDER.map(k=>`<th scope="col">${STYLES[k].name}</th>`).join("")}</tr>`;
+  ORDER.forEach(a=>{
+    h+=`<tr><th scope="row">${STYLES[a].name}</th>`;
+    ORDER.forEach(b=>{
+      const s=PAIRS[pairKey(a,b)].score;
+      const on=(a===you&&b===them)?" on":"";
+      h+=`<td class="${on.trim()}" tabindex="0" data-a="${a}" data-b="${b}" style="--h:${scoreColor(s)}" aria-label="${STYLES[a].name} with ${STYLES[b].name}: ${s}">${s}</td>`;
+    });
+    h+="</tr>";
+  });
+  t.innerHTML=h;
+  t.querySelectorAll("td").forEach(td=>{
+    const go=()=>{you=td.dataset.a;them=td.dataset.b;render();document.getElementById("meter").scrollIntoView({behavior:"smooth"})};
+    td.onclick=go;td.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}};
+  });
+}
+
+// quiz
+const QS=[
+  {t:"I worry that a partner doesn't care about me as much as I care about them.",ax:"anx"},
+  {t:"I feel uncomfortable when someone wants to get very close to me.",ax:"avo"},
+  {t:"If they take a long time to text back, my mind goes to the worst case.",ax:"anx"},
+  {t:"I'd rather not depend on a partner, or have them depend on me.",ax:"avo"},
+  {t:"I need a lot of reassurance that I'm loved.",ax:"anx"},
+  {t:"When things get emotionally intense, I want to pull away.",ax:"avo"},
+  {t:"I'm afraid the people I love will eventually leave.",ax:"anx"},
+  {t:"I find it hard to open up about my feelings.",ax:"avo"},
+  {t:"When a partner seems distant, I try harder to get close, even when it backfires.",ax:"anx"},
+  {t:"I feel crowded when a partner wants to talk about “us” or where things are going.",ax:"avo"},
+  {t:"My mood depends a lot on how the relationship is going that day.",ax:"anx"},
+  {t:"I'd rather handle problems on my own than lean on a partner.",ax:"avo"}
+];
+const qWrap=document.getElementById("questions");
+qWrap.innerHTML=QS.map((q,i)=>`<fieldset class="q" style="border:0;margin:0;padding:0 0 16px">
+  <legend style="padding:0;margin-bottom:8px;font-weight:500">${q.t}</legend>
+  <div class="scale"><span>Not me</span>${[1,2,3,4,5].map(n=>`<label><input type="radio" name="q${i}" id="q${i}-${n}" value="${n}" ${n===3?"checked":""}><span class="pip">${n}</span></label>`).join("")}<span>Very me</span></div>
+</fieldset>`).join("");
+
+let quizStyle=null;
+document.getElementById("quiz").addEventListener("submit",e=>{
+  e.preventDefault();
+  let anx=0,avo=0;
+  QS.forEach((q,i)=>{const v=+document.querySelector(`input[name=q${i}]:checked`).value;q.ax==="anx"?anx+=v:avo+=v});
+  const nA=QS.filter(q=>q.ax==="anx").length, nV=QS.length-nA;
+  anx/=nA;avo/=nV;
+  const hiA=anx>3,hiV=avo>3;
+  quizStyle=hiA&&hiV?"disorg":hiA?"anxious":hiV?"avoidant":"secure";
+  const s=STYLES[quizStyle];
+  // a score within 0.35 of the midpoint means the other side of that line is close too
+  const flip=st=>{const a=st==="anx"?!hiA:hiA, v=st==="avo"?!hiV:hiV;return a&&v?"disorg":a?"anxious":v?"avoidant":"secure"};
+  const near=[Math.abs(anx-3)<=.35?flip("anx"):null, Math.abs(avo-3)<=.35?flip("avo"):null].filter(Boolean);
+  const r=document.getElementById("quiz-result");r.textContent=`You lean ${s.name.toLowerCase()}`;r.style.color=`var(${s.c})`;
+  document.getElementById("quiz-text").textContent=s.about+" "+s.growth+
+    (near.length?` You're close to the line, so some ${near.map(k=>STYLES[k].name.toLowerCase()).join(" and ")} patterns may fit you too.`:"");
+  const pct=v=>((v-1)/4*100).toFixed(0);
+  document.getElementById("bar-anx").style.width=pct(anx)+"%";document.getElementById("num-anx").textContent=anx.toFixed(1);
+  document.getElementById("bar-avo").style.width=pct(avo)+"%";document.getElementById("num-avo").textContent=avo.toFixed(1);
+  document.getElementById("quiz-out").hidden=false;
+});
+document.getElementById("use-result").onclick=()=>{if(quizStyle){you=quizStyle;render();document.getElementById("meter").scrollIntoView({behavior:"smooth"})}};
+
+// guide cards
+document.getElementById("cards").innerHTML=ORDER.map(k=>{const s=STYLES[k];return `<article class="card" style="--c:var(${s.c})">
+  <div><h3>${s.name}</h3><div class="aka">${s.aka}</div></div>
+  <p class="feel">${s.feel}</p>
+  <p>${s.about}</p>
+  <div><h4>You might notice</h4><ul>${li(s.signs)}</ul></div>
+  <dl>
+    <div><dt>How they show love</dt><dd>${s.love}</dd></div>
+    <div><dt>In a conflict</dt><dd>${s.conflict}</dd></div>
+    <div><dt>What sets them off</dt><dd>${s.triggers}</dd></div>
+    <div><dt>What they need from a partner</dt><dd>${s.needs}</dd></div>
+    <div><dt>Growing edge</dt><dd>${s.growth}</dd></div>
+  </dl>
+</article>`}).join("");
+
+// partner reader: traits are mixed so the list doesn't give away which style each belongs to
+const TRAITS=[
+  ["Texts back consistently, even when busy","secure"],
+  ["Gets upset if I don't reply quickly","anxious"],
+  ["Goes quiet or leaves the room during an argument","avoidant"],
+  ["Hot and cold: intense one week, distant the next","disorg"],
+  ["Talks through disagreements calmly","secure"],
+  ["Asks “are we okay?” a lot","anxious"],
+  ["Avoids labels or “where is this going” talks","avoidant"],
+  ["Picks fights right when things are going well","disorg"],
+  ["Is fine with me having my own time and friends","secure"],
+  ["Gets jealous easily","anxious"],
+  ["Pulls back after we've been really close","avoidant"],
+  ["Says they want closeness, then panics when they get it","disorg"],
+  ["Apologizes and makes up after a fight","secure"],
+  ["Wants to spend almost all free time together","anxious"],
+  ["Rarely talks about their feelings","avoidant"],
+  ["Reactions seem much bigger than the situation","disorg"],
+  ["Shows affection easily and openly","secure"],
+  ["Reads a lot into small changes in my tone","anxious"],
+  ["Very protective of their independence and space","avoidant"],
+  ["Struggles to trust me even when I've done nothing wrong","disorg"],
+  ["Introduced me to friends and family without fuss","secure"],
+  ["Goes cold or makes me jealous to get a reaction","anxious"],
+  ["Focuses on my flaws when things get serious","avoidant"],
+  ["Expects me to hurt them or leave","disorg"]
+];
+const KEYWORDS={
+  secure:["consistent","reliable","calm","communicat","apologi","honest","supportive","patient","talks it out","talk it out","respect","open with me","follows through"],
+  anxious:["jealous","clingy","needy","reassur","double text","checks my phone","worri","worry","insecure","abandon","overthink","needs to know where","upset when i","blows up my phone"],
+  avoidant:["space","distant","shut down","shuts down","walls","independen","won't talk","wont talk","ignores","ghost","emotionally unavailable","commit","label","pulls away","pull away","goes quiet","alone time","doesn't open","doesnt open","busy"],
+  disorg:["hot and cold","hot & cold","push","unpredictable","explosive","one minute","sabotag","trust issues","breaks up","break up and","comes back","mixed signals","chaotic","trauma","volatile"]
+};
+const SAFETY_WORDS=["hit me","hits me","hurt me","afraid of","scared of him","scared of her","scared of them","threaten","won't let me","wont let me","controls my","control my","checks my location","isolat","choke","push me","pushed me","grab"];
+const picked=new Set();
+const traitsEl=document.getElementById("traits"), textEl=document.getElementById("partner-text");
+traitsEl.innerHTML=TRAITS.map((t,i)=>`<button type="button" class="trait" id="trait-${i}" data-i="${i}" aria-pressed="false">${t[0]}</button>`).join("");
+traitsEl.addEventListener("click",e=>{
+  const b=e.target.closest(".trait");if(!b)return;
+  const i=+b.dataset.i; picked.has(i)?picked.delete(i):picked.add(i);
+  b.setAttribute("aria-pressed",picked.has(i)); quickRead();
+});
+let typeTimer; textEl.addEventListener("input",()=>{clearTimeout(typeTimer);typeTimer=setTimeout(quickRead,250)});
+
+let partnerStyle=null;
+function renderReading(r){
+  const box=document.getElementById("reading");
+  box.dataset.state="done";
+  partnerStyle=r.style;
+  const s=STYLES[r.style];
+  box.style.setProperty("--c",`var(${s.c})`);
+  document.getElementById("rd-source").textContent=r.source;
+  document.getElementById("rd-title").textContent=`They lean ${s.name.toLowerCase()}`;
+  const conf=document.getElementById("rd-conf");conf.hidden=false;conf.textContent=r.confidence;
+  document.getElementById("rd-summary").textContent=r.summary;
+  document.getElementById("rd-bars").innerHTML=ORDER.map(k=>`<div class="axis"><span>${STYLES[k].name}</span><div class="bar"><i style="width:${r.breakdown[k]}%;--bc:var(${STYLES[k].c})"></i></div><span>${r.breakdown[k]}%</span></div>`).join("");
+  document.getElementById("rd-detail").hidden=false;
+  const ev=document.getElementById("rd-evidence"), ap=document.getElementById("rd-approach");
+  ev.replaceChildren(...r.evidence.map(t=>{const l=document.createElement("li");l.textContent=t;return l}));
+  ap.replaceChildren(...r.approach.map(t=>{const l=document.createElement("li");l.textContent=t;return l}));
+  document.getElementById("rd-safety").hidden=!r.safety;
+  document.getElementById("use-partner").hidden=false;
+}
+function renderEmpty(){
+  const box=document.getElementById("reading");box.dataset.state="empty";box.style.removeProperty("--c");
+  partnerStyle=null;
+  document.getElementById("rd-source").textContent="Quick read";
+  document.getElementById("rd-title").textContent="Pick a few traits or write a description";
+  document.getElementById("rd-conf").hidden=true;
+  document.getElementById("rd-summary").textContent="Your read updates as you go.";
+  document.getElementById("rd-bars").innerHTML="";
+  document.getElementById("rd-detail").hidden=true;
+  document.getElementById("rd-safety").hidden=true;
+  document.getElementById("use-partner").hidden=true;
+}
+
+function quickRead(){
+  const text=textEl.value.toLowerCase();
+  const raw={secure:0,anxious:0,avoidant:0,disorg:0}, hits={secure:[],anxious:[],avoidant:[],disorg:[]};
+  picked.forEach(i=>{const [t,k]=TRAITS[i];raw[k]+=1;hits[k].push(t)});
+  ORDER.forEach(k=>{
+    const found=KEYWORDS[k].filter(w=>text.includes(w)).slice(0,4);
+    raw[k]+=found.length*.6;
+    found.forEach(w=>hits[k].push(`You mentioned “${w}”`));
+  });
+  const signals=ORDER.reduce((n,k)=>n+raw[k],0);
+  updateDeepButton();
+  if(signals===0){renderEmpty();return}
+  // strong anxious and avoidant signals together point toward fearful-avoidant
+  if(raw.anxious>=2&&raw.avoidant>=2) raw.disorg+=.5*Math.min(raw.anxious,raw.avoidant);
+  const tot=ORDER.reduce((n,k)=>n+raw[k]+.3,0);
+  const breakdown={};ORDER.forEach(k=>breakdown[k]=Math.round((raw[k]+.3)/tot*100));
+  const ranked=[...ORDER].sort((a,b)=>raw[b]-raw[a]);
+  const top=ranked[0], second=ranked[1], share=breakdown[top];
+  const confidence=signals<3?"Early guess":share>=45&&signals>=5?"Fairly clear":"Mixed picture";
+  const s=STYLES[top];
+  let summary=`${s.about}`;
+  if(raw[second]>0&&breakdown[second]>=share*.6) summary+=` There are ${STYLES[second].name.toLowerCase()} signs too, so they may sit between the two.`;
+  if(signals<3) summary+=" Add more traits or detail for a clearer picture.";
+  const evidence=[...hits[top].slice(0,4),...(raw[second]>0?hits[second].slice(0,2).map(t=>`${t} (${STYLES[second].name.toLowerCase()})`):[])];
+  renderReading({source:"Quick read",style:top,confidence,breakdown,summary,evidence,
+    approach:[s.approach,`What they need: ${s.needs.charAt(0).toLowerCase()+s.needs.slice(1)}`],
+    safety:SAFETY_WORDS.some(w=>text.includes(w))});
+}
+
+// deeper read: Claude analyzes the written description (only where this viewer can use Claude)
+let sampleFn=null, deepCtl=null;
+function updateDeepButton(){
+  const btn=document.getElementById("deep-btn");
+  btn.hidden=!sampleFn;
+  btn.disabled=textEl.value.trim().length<40;
+  btn.title=btn.disabled?"Write at least a couple of sentences first":"";
+}
+document.getElementById("deep-btn").onclick=async()=>{
+  const btn=document.getElementById("deep-btn"), stop=document.getElementById("deep-stop"), st=document.getElementById("deep-status");
+  deepCtl=new AbortController();
+  btn.disabled=true;stop.hidden=false;st.textContent="Claude is reading your description...";
+  const traits=[...picked].map(i=>"- "+TRAITS[i][0]).join("\n")||"(none ticked)";
+  const prompt=`You are helping someone reflect on their romantic partner using adult attachment theory (secure, anxious-preoccupied, dismissive-avoidant, disorganized/fearful-avoidant). Based only on what they wrote, estimate which style the PARTNER most likely leans toward. Be tentative and kind, speak to the writer as "you" and the partner as "they", use plain language, never diagnose, and remember this is one person's view of another. Do not use em dashes.
+
+Traits the writer ticked:
+${traits}
+
+The writer's description of their partner:
+"""${textEl.value.trim().slice(0,6000)}"""
+
+Reply with only a JSON object in this shape:
+{"style":"secure|anxious|avoidant|disorganized","confidence":"Early guess|Mixed picture|Fairly clear","breakdown":{"secure":0,"anxious":0,"avoidant":0,"disorganized":0},"summary":"2-3 sentences on the pattern you see","evidence":["3-5 short points tying specific things they wrote to a style"],"approach":["3 practical tips for relating to this partner"],"safety_concern":false}
+breakdown values are whole numbers summing to 100. Set safety_concern to true if the description suggests fear, control, threats, isolation, or violence.`;
+  try{
+    const r=await sampleFn.json(prompt,{signal:deepCtl.signal});
+    const map={secure:"secure",anxious:"anxious",avoidant:"avoidant",disorganized:"disorg",disorg:"disorg"};
+    const style=map[String(r.style).toLowerCase()];
+    if(!style) throw {code:"invalid_json"};
+    const bd={};ORDER.forEach(k=>bd[k]=Math.max(0,Math.round(Number(r.breakdown?.[k==="disorg"?"disorganized":k])||0)));
+    const arr=v=>Array.isArray(v)?v.map(String).slice(0,6):[];
+    renderReading({source:"Claude's read",style,confidence:String(r.confidence||"Mixed picture"),breakdown:bd,
+      summary:String(r.summary||""),evidence:arr(r.evidence),approach:arr(r.approach),safety:!!r.safety_concern});
+    st.textContent="Edit your description or traits to go back to the quick read.";
+  }catch(e){
+    const msg={cancelled:"",not_granted:"Claude wasn't allowed for this page, so you're seeing the quick read.",rate_limited:"Too many requests right now. Try again in a minute.",refused:"Claude couldn't read this one. Try rewording the description.",invalid_json:"That read came back garbled. Try again."}[e?.code];
+    st.textContent=msg??"Something went wrong reaching Claude. Try again in a moment.";
+    if(e?.code==="not_granted"||e?.code==="sampling_disabled"){sampleFn=null;updateDeepButton()}
+  }finally{
+    stop.hidden=true;deepCtl=null;updateDeepButton();
+  }
+};
+document.getElementById("deep-stop").onclick=()=>deepCtl?.abort();
+document.getElementById("use-partner").onclick=()=>{if(partnerStyle){them=partnerStyle;render();document.getElementById("meter").scrollIntoView({behavior:"smooth"})}};
+window.claude?.use?.("sample").then(s=>{sampleFn=s;updateDeepButton()}).catch(()=>{});
+quickRead();
+
+// guided journey: goal -> style (pick or quiz) -> matches -> growth -> profile
+const J_STEPS=["What you want","Your style","Best matches","Becoming secure","Your profile"];
+const J={step:0,goal:null,style:null,mode:null,qi:0,answers:[]};
+const jBody=document.getElementById("j-body");
+function jScore(){
+  let a=0,v=0,na=0,nv=0;
+  QS.forEach((q,i)=>{if(q.ax==="anx"){a+=J.answers[i];na++}else{v+=J.answers[i];nv++}});
+  a/=na;v/=nv;
+  return {anx:a,avo:v,style:a>3&&v>3?"disorg":a>3?"anxious":v>3?"avoidant":"secure"};
+}
+function jSet(patch){Object.assign(J,patch);jRender()}
+function jRender(){
+  document.getElementById("j-progress").innerHTML=J_STEPS.map((s,i)=>
+    `<li class="${i<J.step?"done":i===J.step?"now":""}" ${i===J.step?'aria-current="step"':""}>${s}</li>`).join("");
+  const back=document.getElementById("j-back"), next=document.getElementById("j-next");
+  back.style.visibility=J.step===0?"hidden":"visible";
+  next.hidden=J.step===4;
+  next.disabled=(J.step===0&&!J.goal)||(J.step===1&&!J.style);
+  next.textContent=J.step===3?"See my profile":"Next";
+  jBody.innerHTML=[jGoal,jStyle,jMatches,jGrowth,jProfile][J.step]();
+  jBody.querySelectorAll("[data-act]").forEach(el=>el.onclick=()=>jAct(el.dataset.act,el.dataset.v));
+}
+function jAct(act,v){
+  if(act==="goal") jSet({goal:v});
+  else if(act==="mode") jSet({mode:v,style:v==="quiz"?null:J.style,qi:0,answers:[]});
+  else if(act==="style") jSet({style:v});
+  else if(act==="ans"){
+    const answers=[...J.answers];answers[J.qi]=+v;
+    if(J.qi<QS.length-1) jSet({answers,qi:J.qi+1});
+    else {J.answers=answers;jSet({qi:QS.length,style:jScore().style})}
+  }
+  else if(act==="qback") jSet({qi:Math.max(0,J.qi-1)});
+  else if(act==="goto") document.getElementById(v).scrollIntoView({behavior:"smooth"});
+  else if(act==="restart") jSet({step:0,goal:null,style:null,mode:null,qi:0,answers:[]});
+}
+function jGoal(){
+  return `<span class="eyebrow">Step 1 of 5</span><h2>What kind of relationship are you looking for?</h2>
+  <p class="lede">Pick what's closest to true right now. It can change, and that's fine.</p>
+  <div class="j-options">${GOAL_ORDER.map(k=>`<button type="button" class="j-opt" data-act="goal" data-v="${k}" aria-pressed="${J.goal===k}"><strong>${GOALS[k].name}</strong><span>${GOALS[k].desc}</span></button>`).join("")}</div>`;
+}
+function jStyle(){
+  const head=`<span class="eyebrow">Step 2 of 5</span><h2>What's your attachment style?</h2>`;
+  if(!J.mode) return head+`<p class="lede">If you already know, pick it. If you don't, a twelve-question check will point you toward it.</p>
+    <div class="j-options"><button type="button" class="j-opt big" data-act="mode" data-v="know"><strong>I know my style</strong><span>Choose from the four styles, with a short description of each.</span></button>
+    <button type="button" class="j-opt big" data-act="mode" data-v="quiz"><strong>Help me find out</strong><span>Twelve quick statements, about two minutes.</span></button></div>`;
+  if(J.mode==="know") return head+`<p class="lede">Pick the one that sounds most like you in relationships, especially when things get hard.</p>
+    <div class="j-options">${ORDER.map(k=>`<button type="button" class="j-opt" style="--c:var(${STYLES[k].c})" data-act="style" data-v="${k}" aria-pressed="${J.style===k}"><strong>${STYLES[k].name}</strong><span>${STYLES[k].feel}</span><span>${STYLES[k].about}</span></button>`).join("")}</div>
+    <button type="button" class="linkish" data-act="mode" data-v="quiz">Not sure? Take the check instead</button>`;
+  if(J.qi<QS.length) return head+`<p class="lede" style="font-size:.95rem">Statement ${J.qi+1} of ${QS.length}. How much does this sound like you?</p>
+    <p class="j-q">${QS[J.qi].t}</p>
+    <div class="j-scale"><span class="hint">Not me</span>${[1,2,3,4,5].map(n=>`<button type="button" data-act="ans" data-v="${n}" aria-pressed="${J.answers[J.qi]===n}" aria-label="${n} of 5">${n}</button>`).join("")}<span class="hint">Very me</span></div>
+    ${J.qi>0?`<button type="button" class="linkish" data-act="qback">Previous statement</button>`:""}`;
+  const r=jScore(), s=STYLES[r.style], pct=x=>((x-1)/4*100).toFixed(0);
+  return head+`<div class="quiz-out" style="--c:var(${s.c})"><span class="picker-label">Your result</span>
+    <h3 style="color:var(${s.c})">You lean ${s.name.toLowerCase()}</h3><p>${s.about}</p>
+    <div class="axes"><div class="axis"><span>Anxiety</span><div class="bar"><i style="width:${pct(r.anx)}%"></i></div><span>${r.anx.toFixed(1)}</span></div>
+    <div class="axis"><span>Avoidance</span><div class="bar"><i style="width:${pct(r.avo)}%"></i></div><span>${r.avo.toFixed(1)}</span></div></div></div>
+    <button type="button" class="linkish" data-act="mode" data-v="quiz">Retake the check</button>`;
+}
+function jMatches(){
+  const st=J.style, ranked=ORDER.map(k=>({k,p:PAIRS[pairKey(st,k)]})).sort((a,b)=>b.p.score-a.p.score), g=GOALS[J.goal];
+  return `<span class="eyebrow">Step 3 of 5</span><h2>Who pairs best with ${STYLES[st].name.toLowerCase()}</h2>
+  <p class="lede">Ranked from easiest to hardest. Any pairing can work with self-awareness and effort; these are the tendencies.</p>
+  <div class="j-matches">${ranked.map(({k,p})=>`<div class="j-match" style="--c:var(${STYLES[k].c})">
+    <div class="who"><strong>${STYLES[k].name}</strong><span class="num" style="color:${scoreColor(p.score)}">${p.score}</span><span class="hint">${p.verdict}</span></div>
+    <p>${p.summary}</p></div>`).join("")}</div>
+  <div class="tip"><strong>Looking for ${g.name.toLowerCase()} as ${STYLES[st].name.toLowerCase()}: </strong>${g.s[st]}</div>`;
+}
+function jGrowth(){
+  const g=GROW[J.style];
+  return `<span class="eyebrow">Step 4 of 5</span><h2>${g.title}</h2>
+  <p class="lede">Security can be learned. These are the steps that move you there, in the order most people need them.</p>
+  <div class="grow-path" style="--c:var(${STYLES[J.style].c})"><ol class="steps">${li(g.steps)}</ol></div>
+  <div class="tip"><strong>Try this week: </strong>${g.week}</div>`;
+}
+function jProfile(){
+  const st=J.style, s=STYLES[st], g=GOALS[J.goal];
+  const ranked=ORDER.map(k=>({k,sc:PAIRS[pairKey(st,k)].score})).sort((a,b)=>b.sc-a.sc);
+  const best=ranked[0], worst=ranked[ranked.length-1];
+  return `<span class="eyebrow">Step 5 of 5</span><h2>Your relationship profile</h2>
+  <div class="j-profile">
+    <div><span class="picker-label">Looking for</span><b>${g.name}</b><span class="hint">${g.desc}</span></div>
+    <div><span class="picker-label">Your style</span><b style="color:var(${s.c})">${s.name}</b><span class="hint">${s.aka}</span></div>
+    <div><span class="picker-label">Best match</span><b>${STYLES[best.k].name} (${best.sc})</b><span class="hint">${PAIRS[pairKey(st,best.k)].verdict}</span></div>
+    <div><span class="picker-label">Hardest pairing</span><b>${STYLES[worst.k].name} (${worst.sc})</b><span class="hint">${PAIRS[pairKey(st,worst.k)].verdict}</span></div>
+    <div class="wide"><span class="picker-label">What you need from a partner</span><p>${s.needs}</p></div>
+    <div class="wide"><span class="picker-label">Your first step toward secure</span><p>${GROW[st].steps[0]}</p></div>
+  </div>
+  <p class="lede" style="font-size:.95rem">Everything below is now set to your answers.</p>
+  <div class="j-links">
+    <button type="button" class="btn" data-act="goto" data-v="meter">Check a specific partner</button>
+    <button type="button" class="btn ghost" data-act="goto" data-v="partner">Read someone's style</button>
+    <button type="button" class="btn ghost" data-act="restart">Start over</button>
+  </div>`;
+}
+document.getElementById("j-next").onclick=()=>{
+  if(J.step===3){you=J.style;goalYou=J.goal;render()}
+  jSet({step:Math.min(4,J.step+1)});document.getElementById("journey").scrollIntoView({behavior:"smooth"});
+};
+document.getElementById("j-back").onclick=()=>{jSet({step:Math.max(0,J.step-1)});document.getElementById("journey").scrollIntoView({behavior:"smooth"})};
+jRender();
+
+render();
+</script>
