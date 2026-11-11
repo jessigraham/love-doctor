@@ -4,7 +4,9 @@ A self-discovery tool built on adult attachment theory. It walks you through wha
 
 ## What's in it
 
-- **Guided journey**: five steps from relationship goal to a personal profile
+The tools below the journey open from the profile or the "Skip to all tools" link.
+
+- **Guided journey**: the main experience, one screen at a time. It covers what you're looking for, your attachment style (pick it or take a 12-statement check), your current relationship if you have one (pick their style or describe them), who's a good match for you, and how to grow toward secure. It ends in a personal profile with self-awareness notes, what a good match looks like, and next steps.
 - **Compatibility meter**: score, typical moment, strengths and friction for every pairing of secure, anxious, avoidant and disorganized
 - **Relationship check-in**: an honest read on whether a current relationship is likely to work
 - **What you're looking for**: goal alignment between you and a partner
