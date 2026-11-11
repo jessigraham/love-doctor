@@ -223,6 +223,37 @@ textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border
 .support{display:grid;gap:8px;padding:16px 18px;border-radius:12px;border:1px solid var(--line);font-size:.93rem}
 .support ul{margin:0;padding-left:18px;display:grid;gap:4px}
 
+/* light touches */
+.dyk{display:grid;gap:4px;padding:12px 16px;border-radius:8px;background:var(--bg);border:1px dashed var(--line)}
+.dyk p{font-size:.9rem;color:var(--muted)}
+.dig{border-top:1px solid var(--line);padding-top:12px}
+.dig > summary{cursor:pointer;font-family:var(--mono);font-size:.78rem;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);font-weight:600;list-style:none}
+.dig > summary::-webkit-details-marker{display:none}
+.dig > summary::before{content:"+ "}
+.dig[open] > summary::before{content:"\2212  "}
+.dig > summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.dig-body{display:grid;gap:12px;padding-top:12px}
+.mini-h{margin:6px 0 0;font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.goal-line{display:grid;gap:4px;padding:12px 16px;border-radius:8px;border-left:3px solid var(--ac);background:var(--bg)}
+.goal-line b{color:var(--ac)}
+.takeaways{margin:0;padding:0;list-style:none;counter-reset:tk;display:grid;gap:10px}
+.takeaways li{counter-increment:tk;display:grid;grid-template-columns:36px 1fr;gap:10px;font-family:var(--display);font-weight:600;font-size:1.12rem;line-height:1.3;letter-spacing:-.01em}
+.takeaways li::before{content:counter(tk,decimal-leading-zero);font-family:var(--mono);font-size:.8rem;color:var(--accent);padding-top:4px}
+.signoff{font-family:var(--serif);font-style:italic;font-size:1.2rem;color:var(--muted)}
+
+/* childhood roots and alignment */
+.roots{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.root{display:grid;gap:6px;align-content:start;padding:14px 16px;border-radius:8px;border:1px solid var(--line);background:var(--surface);min-width:0}
+.root p{font-size:.95rem}
+.root.rule{border-color:var(--c, var(--accent));background:color-mix(in srgb, var(--c, var(--accent)) 7%, var(--surface))}
+.rule-q{font-family:var(--serif);font-style:italic;font-size:1.15rem;line-height:1.3}
+.align-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.align-all{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.align-card{display:grid;gap:10px;align-content:start;padding:18px;border-radius:12px;border:1px solid var(--line);box-shadow:inset 0 3px 0 var(--c);background:var(--surface);min-width:0}
+.align-card h3{font-size:1.15rem}
+.align-card ul{margin:0;padding-left:18px;display:grid;gap:6px;font-size:.93rem}
+.plan-list{margin:0;padding-left:18px;display:grid;gap:6px}
+
 /* cycles */
 .cycles{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .cycle{display:grid;gap:10px;padding:16px;border-radius:14px;border:1.5px solid var(--cy);background:color-mix(in srgb, var(--cy) 7%, var(--surface));min-width:0;align-content:start}
@@ -315,7 +346,7 @@ td:focus-visible{outline:2px solid var(--accent)}
   .j-matches .j-match{grid-template-columns:1fr auto 16px}
   .j-matches .j-match > .hint{grid-column:1/-1}
   .j-mdet > summary::after{grid-row:1;grid-column:3}
-  .j-learn,.j-facts,.habits,.cycles,.practices{grid-template-columns:1fr}
+  .j-learn,.j-facts,.habits,.cycles,.practices,.roots,.align-grid,.align-all{grid-template-columns:1fr}
   .weeks li{grid-template-columns:1fr;gap:2px}
   .j-compare .axis{grid-template-columns:1fr 36px}
   .j-compare .axis .bar{grid-column:1/-1;grid-row:2}
@@ -444,7 +475,6 @@ h3{font-size:1.25rem}
 <div class="wrap">
   <header class="brand">
     <span class="brand-mark"><svg viewBox="0 0 34 20" aria-hidden="true"><path d="M0 12h8l3-8 4 14 3-9 2 3h14" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>The Love Doctor<small>Attachment &amp; compatibility</small></span>
-    <button type="button" class="linkish" id="show-tools">Skip to all tools</button>
   </header>
 
   <section id="journey" class="journey" aria-label="Your relationship journey">
@@ -697,6 +727,55 @@ const STYLES = {
 };
 const ORDER = ["secure","anxious","avoidant","disorg"];
 // how each style tends to see itself and other people (Bartholomew & Horowitz's four-category model)
+// what each style usually learned growing up, in plain terms
+const CHILDHOOD={
+  secure:{had:"Caregivers who showed up consistently. When you needed something, someone came. When you messed up, you weren't cut off.",
+    rule:"People are reliable, and I can handle things.",
+    now:"You ask for what you need, you don't panic when someone wants space, and you can argue without it turning into a war.",
+    drawn:"Steady, straightforward people. Drama doesn't feel exciting to you. It feels like a waste of time.",
+    compat:"You can work with every style, and you do best with someone else who plays it straight."},
+  anxious:{had:"Care that came and went. Some days you got attention and warmth, other days the adults were distracted, stressed, or unavailable. You never knew which version you'd get.",
+    rule:"Love can disappear, so keep watching and hold on tight.",
+    now:"You read into slow replies, want regular check-ins, and push for answers when something feels off.",
+    drawn:"People who are hard to read or hard to pin down. Chasing them feels familiar, so it gets mistaken for chemistry.",
+    compat:"That's why anxious and avoidant attract so often, and why it's usually rough. A consistent partner who answers the phone is the better fit."},
+  avoidant:{had:"Your basic needs were covered, but feelings weren't really part of the deal. Needing comfort or showing weakness got ignored, brushed off, or met with \u201ctoughen up.\u201d",
+    rule:"Handle it yourself. Counting on people gets you let down.",
+    now:"You go quiet under pressure, keep problems to yourself, and feel crowded when someone wants a lot of closeness.",
+    drawn:"Either people who need a lot from you, because taking care of things is familiar, or people who keep their distance, because it feels safe.",
+    compat:"Partners who push for constant closeness trigger your shutdown. A partner who gives you room and talks straight works best."},
+  disorg:{had:"Home was unpredictable. The person who was supposed to make you feel safe sometimes caused the stress, through anger, chaos, drinking, or things nobody explained.",
+    rule:"I want people close, but close is where things go wrong.",
+    now:"You can go from all-in to wanting out fast, have trouble trusting good things, and react harder than the moment calls for.",
+    drawn:"Intense relationships with big highs and lows, because that rhythm feels like home, even when it costs you.",
+    compat:"Calm, consistent partners can feel strange at first, but they're the ones that last. Two people running the same push-pull usually burn out."}
+};
+// practical moves for meeting a partner of each style where they are
+const ALIGN={
+  secure:["Be direct. They respond to plain talk, not hints.","Do what you say, when you say it. They notice.","Don't test them. They'll take your words at face value.","Let them help. Steady people like being counted on."],
+  anxious:["Reply when you can, even briefly: \u201cSlammed, call you at 7.\u201d","Make plans and keep them. Predictability settles them down.","Tell them where they stand before they have to ask.","Don't go silent in a fight. Say you need a break and when you'll be back."],
+  avoidant:["Give them room without punishing it. They come back faster when they don't feel chased.","Bring up problems side by side: in the car, on a walk, while doing something together.","Keep it short and specific. Long emotional talks make them shut down.","Notice how they show love through actions, and tell them you see it."],
+  disorg:["Stay calm when they swing. Don't match their intensity.","Be predictable, even in small things. Reliability is what earns their trust.","Don't take the push-away personally, and don't chase hard either.","Encourage support beyond you. You can't be their only anchor."]
+};
+const YOUR_SIDE={
+  secure:"Don't over-carry. Being the steady one doesn't mean doing all the work.",
+  anxious:"Settle yourself before you reach out, and ask directly instead of testing.",
+  avoidant:"Say when you need space and when you'll be back. Disappearing reads as rejection.",
+  disorg:"Pause before big reactions. No breakups or ultimatums in the heat of the moment."
+};
+function childhoodHTML(st){
+  const c=CHILDHOOD[st];
+  return `<div class="j-section"><h3>Where it starts</h3>
+    <p class="hint">Your style was learned early, from what you got growing up and what you didn't. Kids adapt to whatever keeps them connected to the people raising them, and those adaptations become your default as an adult.</p>
+    <div class="roots">
+      <div class="root"><span class="picker-label">What you had, or didn't</span><p>${c.had}</p></div>
+      <div class="root rule"><span class="picker-label">The rule you learned</span><p class="rule-q">\u201c${c.rule}\u201d</p></div>
+      <div class="root"><span class="picker-label">How it shows up now</span><p>${c.now}</p></div>
+      <div class="root"><span class="picker-label">Who you're drawn to, and why</span><p>${c.drawn}</p></div>
+    </div>
+    <div class="tip"><strong>What it means for compatibility: </strong>${c.compat}</div>
+    <p class="hint">This isn't about blaming anyone. Most parents did what they could with what they had. It's about knowing your wiring so you run it, instead of it running you. Most people are a mix, so you may see yourself in more than one.</p></div>`;
+}
 const ORIGINS={
   secure:"Usually caregivers who were warm and tuned in to your needs, even the ones you couldn't put into words.",
   anxious:"Often caregiving that was loving but inconsistent, so you learned to watch closely and hold on tight.",
@@ -1096,6 +1175,8 @@ document.getElementById("cards").innerHTML=ORDER.map(k=>{const s=STYLES[k];retur
     <div><dt>In a conflict</dt><dd>${s.conflict}</dd></div>
     <div><dt>What sets them off</dt><dd>${s.triggers}</dd></div>
     <div><dt>What they need from a partner</dt><dd>${s.needs}</dd></div>
+    <div><dt>Where it starts</dt><dd>${CHILDHOOD[k].had}</dd></div>
+    <div><dt>The rule they learned</dt><dd>\u201c${CHILDHOOD[k].rule}\u201d</dd></div>
     <div><dt>Growing edge</dt><dd>${s.growth}</dd></div>
   </dl>
 </article>`}).join("");
@@ -1274,7 +1355,17 @@ const SELF={
   disorg:{love:"deeply and intensely, in waves.",conflict:"swing between pursuing and shutting down, sometimes in the same argument.",needs:"predictability, patience, and a partner who stays calm when you can't."}
 };
 const cap=t=>t.charAt(0).toUpperCase()+t.slice(1);
-const PHASES=["What you want","Who you are","Your relationship","Your matches","Secure and connected"];
+const aan=w=>(/^[aeiou]/i.test(w)?"an ":"a ")+w;
+const dig=(title,inner)=>`<details class="dig"><summary>${title}</summary><div class="dig-body">${inner}</div></details>`;
+const FACTS={
+  goal:"Attachment research started with babies. In the 1970s, psychologist Mary Ainsworth watched how toddlers reacted when a parent left the room for a few minutes and came back. Those reactions became the styles you'll see here.",
+  knowStyle:"In 1987, researchers Cindy Hazan and Phillip Shaver ran a \u201clove quiz\u201d in a newspaper and found that adults fall into the same patterns babies do.",
+  styleResult:"Your style can change depending on the relationship. Plenty of people are secure with friends and anxious or avoidant with partners.",
+  matches:"Anxious and avoidant people are drawn to each other a lot. The back-and-forth feels like chemistry, even though it's mostly nerves.",
+  growth:"Couples don't need matching styles to do well. What predicts staying together is how they handle the hard moments, especially how quickly they come back after a fight.",
+  connect:"Small moments beat big gestures. Most connection is built in everyday exchanges, like how you respond when someone says \u201clook at this.\u201d"
+};
+const PHASES=["What you want","Who you are","Your relationship","Your matches","Make it work"];
 // deepening connection: each style's growth edge, shared practices, and conversation starters
 const CONNECT_EDGE={
   secure:"Go past comfortable. Ask deeper questions, and share the parts of you that still feel tender.",
@@ -1321,7 +1412,7 @@ function secureCompare(st){
   return `<div class="j-compare"><span class="picker-label">Average compatibility across all partner styles</span>${rows.map(([n,v,c])=>
     `<div class="axis"><span>${n}</span><div class="bar"><i style="width:${v}%;background:var(${c})"></i></div><span>${v}</span></div>`).join("")}</div>`;
 }
-const J={qIdx:0,screen:"intro",hist:[],goal:null,style:null,viaQuiz:false,qi:0,answers:[],rel:null,pStyle:null,pViaTraits:false,pSafety:false,pTraits:new Set(),pText:""};
+const J={pGoal:null,qIdx:0,screen:"intro",hist:[],goal:null,style:null,viaQuiz:false,qi:0,answers:[],rel:null,pStyle:null,pViaTraits:false,pSafety:false,pTraits:new Set(),pText:""};
 const jBody=document.getElementById("j-body");
 
 function jScore(){
@@ -1379,8 +1470,8 @@ const SCREENS={
     return `<span class="eyebrow">Your attachment style</span><h2 style="color:var(${s.c})">${J.viaQuiz?"You lean ":"You're "}${s.name.toLowerCase()}</h2>
     <p class="j-feel" style="color:var(${s.c})">${s.feel}</p><p class="lede">${s.about}</p>
     <div class="j-section"><h3>Your strengths</h3><p class="hint">Every style has gifts. These are yours to build on.</p><ul class="strengths">${li(STRENGTHS[J.style])}</ul></div>
-    <div class="j-section"><h3>Where it often starts</h3><p>${ORIGINS[J.style]}</p><p class="hint">Caregivers don't have to mean any harm for this to happen. A child can feel unmet even when parents are doing their best. And attachment is a spectrum: most people recognize a bit of more than one style in themselves.</p></div>
-    <div class="j-section"><h3>How you see yourself and others</h3><p class="hint">Psychologists describe each style by two beliefs: how you see yourself, and how much you trust other people. ${VIEWS[J.style].self?"You tend to see yourself as worthy of love":"Deep down you may doubt you're worthy of love"}, and ${VIEWS[J.style].others?"you tend to expect that others can be trusted.":"you tend to expect that others will let you down."}</p>${viewMap(J.style)}</div>
+    ${childhoodHTML(J.style)}
+    ${dig("Dig deeper: how you see yourself and others",`<p class="hint">Psychologists describe each style by two beliefs: how you see yourself, and how much you trust other people. ${VIEWS[J.style].self?"You tend to see yourself as worthy of love":"Deep down you may doubt you're worthy of love"}, and ${VIEWS[J.style].others?"you tend to expect that others can be trusted.":"you tend to expect that others will let you down."}</p>${viewMap(J.style)}`)}
     ${r?`<div class="axes"><div class="axis"><span>Anxiety</span><div class="bar"><i style="width:${pct(r.anx)}%"></i></div><span>${r.anx.toFixed(1)}</span></div><div class="axis"><span>Avoidance</span><div class="bar"><i style="width:${pct(r.avo)}%"></i></div><span>${r.avo.toFixed(1)}</span></div></div>`:""}
     <dl class="j-facts">
       <div><dt>How you show love</dt><dd>${cap(SELF[J.style].love)}</dd></div>
@@ -1394,19 +1485,27 @@ const SCREENS={
     `<div class="j-options two">${opt("pknow","yes",false,"Yes, I know it","Pick from the four styles")}${opt("pknow","no",false,"Not sure","Tell us how they act and we'll make a best guess")}</div>`},
   partnerPick:{phase:2,html:()=>head("Step 3","Which sounds most like them?")+
     `<div class="j-options two">${ORDER.map(k=>opt("pstyle",k,J.pStyle===k,STYLES[k].name,STYLES[k].feel,STYLES[k].c)).join("")}</div>`},
-  partnerTraits:{phase:2,next:()=>"pairing",canNext:()=>J.pTraits.size>=2||J.pText.trim().length>=30,html:()=>head("Step 3","What are they like?","Tap everything that sounds like them. Pick at least two, or describe them below.")+
+  partnerTraits:{phase:2,next:()=>"partnerGoal",canNext:()=>J.pTraits.size>=2||J.pText.trim().length>=30,html:()=>head("Step 3","What are they like?","Tap everything that sounds like them. Pick at least two, or describe them below.")+
     `<div class="traits">${TRAITS.map((t,i)=>`<button type="button" class="trait" data-act="trait" data-v="${i}" aria-pressed="${J.pTraits.has(i)}">${t[0]}</button>`).join("")}</div>
     <label class="picker-label" for="j-ptext">Anything else about how they act? (optional)</label>
     <textarea id="j-ptext" rows="3" placeholder="For example: when we argue they leave the room and won't talk until the next day."></textarea>`},
+  partnerGoal:{phase:2,html:()=>head("Step 3","And what are they looking for?","Your best guess is fine.")+
+    `<div class="j-options">${GOAL_ORDER.map(k=>opt("pgoal",k,J.pGoal===k,GOALS[k].name,GOALS[k].desc)).join("")}</div>`},
   pairing:{phase:2,next:()=>"matches",html:()=>{
     const p=PAIRS[pairKey(J.style,J.pStyle)], ps=STYLES[J.pStyle];
     return head("Your relationship",`${STYLES[J.style].name} + ${ps.name}`)+
     (J.pViaTraits?`<p class="hint">From what you shared, your partner most likely leans <strong style="color:var(${ps.c})">${ps.name.toLowerCase()}</strong>. That's a best guess, not a verdict.</p>`:"")+
     `<div class="j-score"><span class="num" style="color:${scoreColor(p.score)}">${p.score}</span><div><strong style="color:${scoreColor(p.score)}">${p.verdict}</strong><p>${p.summary}</p></div></div>
+    ${J.pGoal?(()=>{const [lvl,ti,tx]=goalAlignment(J.goal,J.pGoal);return `<div class="goal-line" style="--ac:${lvl==="good"?"var(--good)":lvl==="mid"?"var(--mid)":"var(--bad)"}"><span class="picker-label">What you each want</span><p><strong>${GOALS[J.goal].name}</strong> + <strong>${GOALS[J.pGoal].name}</strong>: <b>${ti}.</b> ${tx}</p></div>`})():""}
     <blockquote class="scene"><span class="picker-label">A typical moment</span><p>${SCENES[pairKey(J.style,J.pStyle)]}</p></blockquote>
     <div class="j-section"><h3>The cycles you two can fall into</h3><p class="hint">Every couple repeats patterns. Learn to spot the first loop early, and practice the second until it becomes the default.</p>${cyclesHTML(pairKey(J.style,J.pStyle))}</div>
-    <div class="cols"><div><h4>What works</h4><ul>${li(p.works)}</ul></div><div><h4>Where it gets hard</h4><ul>${li(p.hard)}</ul></div></div>
+    <div class="j-section"><h3>What each of you learned growing up</h3><p class="hint">Most friction between you comes from these two rules running into each other.</p>
+      <div class="roots">
+        <div class="root rule" style="--c:var(${STYLES[J.style].c})"><span class="picker-label">You (${STYLES[J.style].name.toLowerCase()})</span><p class="rule-q">\u201c${CHILDHOOD[J.style].rule}\u201d</p><p class="hint">${CHILDHOOD[J.style].now}</p></div>
+        <div class="root rule" style="--c:var(${ps.c})"><span class="picker-label">Them (${ps.name.toLowerCase()})</span><p class="rule-q">\u201c${CHILDHOOD[J.pStyle].rule}\u201d</p><p class="hint">${CHILDHOOD[J.pStyle].now.replace(/^You /,"They ").replace(/\byou\b/g,"they").replace(/\byour\b/g,"their").replace(/\byourself\b/g,"themselves")}</p></div>
+      </div></div>
     <div class="tip"><strong>What helps: </strong>${p.tip}</div>
+    ${dig("More on this pairing",`<div class="cols"><div><h4>What works</h4><ul>${li(p.works)}</ul></div><div><h4>Where it gets hard</h4><ul>${li(p.hard)}</ul></div></div>`)}
     ${J.pSafety?`<div class="safety">Some of what you described, like fear, control, or being cut off from people, goes beyond attachment style. In the US, the National Domestic Violence Hotline is free and confidential, 24/7: <span class="hotline">1-800-799-7233</span>, or text <span class="hotline">START</span> to <span class="hotline">88788</span>.</div>`:""}`}},
   matches:{phase:3,next:()=>"growth",html:()=>{
     const st=J.style, m=MATCH_FOR[st], ranked=ORDER.map(k=>({k,p:PAIRS[pairKey(st,k)]})).sort((a,b)=>b.p.score-a.p.score);
@@ -1416,21 +1515,27 @@ const SCREENS={
     <div class="cols"><div><h4>Green flags to look for</h4><ul>${li(m.flags)}</ul></div><div><h4>Be careful with</h4><p>${m.avoid}</p></div></div>
     <div class="tip"><strong>Looking for ${GOALS[J.goal].name.toLowerCase()}: </strong>${GOALS[J.goal].s[st]}</div>`}},
   growth:{phase:4,next:()=>"connect",html:()=>{
-    const st=J.style, g=GROW[st], isSec=st==="secure";
-    return head("Step 5",isSec?"Your biggest strength: staying secure":"The goal: becoming secure",
-      "Of the four styles, secure attachment gives the best odds with every kind of partner. It's also the one style anyone can learn.")+
-    secureCompare(st)+
-    `<p class="hint">Secure is the best match for every style, including other secure people. Becoming more secure raises your odds whoever you end up with.</p>
-    <div class="j-section"><h3>${isSec?"How to keep it":"How to get there"}</h3>
-    <div class="grow-path" style="--c:var(${STYLES[st].c})"><ol class="steps">${li(g.steps)}</ol></div></div>
-    <div class="tip"><strong>Try this week: </strong>${g.week}</div>
-    <div class="j-section"><h3>Styles can change</h3><p>${isSec
-      ?"Security can wobble after a loss, a trauma, or a painful relationship. If you notice yourself becoming more anxious or guarded, that's a signal to slow down and get support, not a sign that something is wrong with you."
-      :"Your style isn't fixed. People often become more secure through a relationship with a secure partner, through therapy, or through steady self-awareness work like the steps above."}</p></div>
-    <div class="support"><strong>When to talk to a therapist</strong><p>Working with a therapist is the most reliable way to become more secure. It's especially worth it if any of these sound familiar:</p><ul>${li(SUPPORT_SIGNS)}</ul></div>`}},
+    const st=J.style, ps=J.pStyle, g=GROW[st], isSec=st==="secure", h=CYCLES[pairKey(st,ps||"secure")].healthy;
+    const alignBlock=ps
+      ?`<div class="align-grid">
+          <div class="align-card" style="--c:var(${STYLES[ps].c})"><span class="picker-label">Meet them where they are</span><h3>Working with ${aan(STYLES[ps].name.toLowerCase())} partner</h3><ol class="steps">${li(ALIGN[ps])}</ol></div>
+          <div class="align-card" style="--c:var(${STYLES[st].c})"><span class="picker-label">Your side of it</span><h3>As ${STYLES[st].name.toLowerCase()}</h3><p>${YOUR_SIDE[st]}</p>
+            <p class="hint">Their rule: \u201c${CHILDHOOD[ps].rule}\u201d<br>Your rule: \u201c${CHILDHOOD[st].rule}\u201d<br>When you know both, a lot of fights stop feeling personal.</p></div>
+        </div>
+        <div class="tip"><strong>What you're aiming for: ${h.name}. </strong>${h.fix}</div>`
+      :`<div class="align-all">${ORDER.map(k=>`<div class="align-card" style="--c:var(${STYLES[k].c})"><span class="picker-label">Dating someone ${STYLES[k].name.toLowerCase()}</span><p class="rule-q">\u201c${CHILDHOOD[k].rule}\u201d</p><ul>${li(ALIGN[k].slice(0,2))}</ul></div>`).join("")}</div>
+        <div class="tip"><strong>Your side, whoever you date: </strong>${YOUR_SIDE[st]}</div>`;
+    return head("Step 5",ps?`How to make it work with ${aan(STYLES[ps].name.toLowerCase())} partner`:"How to make it work with any partner",
+      "You don't have to become a different person. Most of this is knowing how your partner is wired and making a few adjustments on both sides.")+
+    alignBlock+
+    `<div class="j-section"><h3>${isSec?"Keep your edge":"One more thing that helps: security"}</h3>
+      <p>${isSec?"You already have the style that works best with everyone. The job is holding onto it when life gets stressful.":`Not required, but worth knowing: people who grow more secure find every pairing a little easier. Styles shift over time, with a steady partner or a bit of work.`}</p>
+      <div class="tip"><strong>Try this week: </strong>${g.week}</div>
+      ${dig("See how much it helps, and the first steps",`${secureCompare(st)}<div class="grow-path" style="--c:var(${STYLES[st].c})"><ol class="steps">${li(g.steps.slice(0,3))}</ol></div>`)}</div>
+    ${dig("When it's worth bringing in a pro",`<p>A good therapist or couples counselor can speed all of this up. It's worth it if:</p><ul>${li(SUPPORT_SIGNS)}</ul>`)}`}},
   connect:{phase:4,next:()=>"profile",html:()=>{
     const st=J.style;
-    return head("Step 6","Nurture deeper connection","Security is the foundation. Connection is what you build on top of it. These are the habits research links to closeness that lasts.")+
+    return head("Step 6","Nurture deeper connection","Whatever your styles, closeness is built the same way: in small, everyday moments. These are the habits research links to connection that lasts.")+
     `<div class="tip" style="--accent-soft:color-mix(in srgb, var(${STYLES[st].c}) 14%, var(--surface))"><strong style="color:var(${STYLES[st].c})">Your area to work on as ${STYLES[st].name.toLowerCase()}: </strong>${CONNECT_EDGE[st]}</div>
     <div class="practices">${CONNECT_PRACTICES.map(([h,b])=>`<div class="practice"><strong>${h}</strong><p>${b}</p></div>`).join("")}</div>
     <div class="askbox"><span class="picker-label">A question to ask someone you're close to</span>
@@ -1441,7 +1546,14 @@ const SCREENS={
     const best=ORDER.map(k=>({k,sc:PAIRS[pairKey(st,k)].score})).sort((a,b)=>b.sc-a.sc)[0];
     const pair=J.pStyle?PAIRS[pairKey(st,J.pStyle)]:null;
     const weeks=gr.steps.slice(0,4).map((t,i)=>`<li><span class="wk">Week ${i+1}</span>${t}</li>`).join("");
+    const cy=J.pStyle?CYCLES[pairKey(st,J.pStyle)]:null;
+    const takeaways=[
+      `You're ${s.name.toLowerCase()}. Growing up, you learned \u201c${CHILDHOOD[st].rule.charAt(0).toLowerCase()+CHILDHOOD[st].rule.slice(1)}\u201d That's a habit, not a life sentence.`,
+      cy?`With your partner, watch for ${cy.stuck.name.toLowerCase()} and aim for ${cy.healthy.name.toLowerCase()}.`:`Your best fit is ${STYLES[best.k].name.toLowerCase()}. Choose consistency over intensity.`,
+      `Your one move this week: ${YOUR_SIDE[st].charAt(0).toLowerCase()+YOUR_SIDE[st].slice(1)}`
+    ];
     return `<span class="eyebrow">Your results</span><h2>Your relationship profile</h2>
+    <ol class="takeaways">${li(takeaways)}</ol>
     <div class="j-profile">
       <div><span class="picker-label">Looking for</span><b>${g.name}</b></div>
       <div><span class="picker-label">Your style</span><b style="color:var(${s.c})">${s.name}</b></div>
@@ -1449,26 +1561,27 @@ const SCREENS={
       <div><span class="picker-label">${pair?"You and your partner":"Hardest pairing"}</span><b>${pair?`${STYLES[J.pStyle].name} (${pair.score})`:(()=>{const w=ORDER.map(k=>({k,sc:PAIRS[pairKey(st,k)].score})).sort((a,b)=>a.sc-b.sc)[0];return `${STYLES[w.k].name} (${w.sc})`})()}</b></div>
     </div>
     <div class="j-section"><h3>What you learned about yourself</h3>
-      <ul><li><strong>You love</strong> ${SELF[st].love}</li><li><strong>In conflict, you</strong> ${SELF[st].conflict}</li><li><strong>What sets you off:</strong> ${s.triggers.charAt(0).toLowerCase()+s.triggers.slice(1)}</li><li><strong>You need</strong> ${SELF[st].needs}</li><li><strong>Your strengths:</strong> ${STRENGTHS[st].map(x=>x.charAt(0).toLowerCase()+x.slice(1)).join(", ")}.</li></ul></div>
+      <ul><li><strong>You love</strong> ${SELF[st].love}</li><li><strong>In conflict, you</strong> ${SELF[st].conflict}</li><li><strong>What sets you off:</strong> ${s.triggers.charAt(0).toLowerCase()+s.triggers.slice(1)}</li><li><strong>The rule you learned growing up:</strong> \u201c${CHILDHOOD[st].rule}\u201d</li><li><strong>You need</strong> ${SELF[st].needs}</li><li><strong>Your strengths:</strong> ${STRENGTHS[st].map(x=>x.charAt(0).toLowerCase()+x.slice(1)).join(", ")}.</li></ul></div>
     <div class="j-section"><h3>Who's a good match for you</h3><p>${m.text}</p><ul>${li(m.flags.map(f=>"Look for someone who "+f.charAt(0).toLowerCase()+f.slice(1)))}</ul>
       ${pair&&pair.score<45?`<p class="hint">Your current pairing scores low. The relationship check-in in the tools gives an honest read on whether it can work.</p>`:""}</div>
     <div class="j-section"><h3>How you'll deepen connection</h3><p>${CONNECT_EDGE[st]}</p>
       <ul><li>Turn toward small bids for attention instead of away from them.</li><li>Name one thing you appreciate, out loud, every day.</li><li>Ask tonight: \u201c${CONNECT_QS[J.qIdx]}\u201d</li></ul></div>
-    <div class="j-secure" style="--c:var(--secure)">
-      <span class="eyebrow">Your most important next step</span>
-      <h3>${isSec?"Stay secure, and keep growing":"Become more secure"}</h3>
-      <p>${isSec
-        ?"You already have the style with the best odds. The work now is protecting it under stress and choosing partners who can meet you there."
-        :`This is the single change that improves your chances most. As ${s.name.toLowerCase()}, your average compatibility across all styles is ${avgFor(st)}. As secure, it's ${avgFor("secure")}. You don't need a secure partner to start; you can build it yourself.`}</p>
-      <div class="j-plan"><h4>Your four-week plan</h4><ol class="weeks">${weeks}</ol>
-        <p class="hint">Start today: ${gr.week.charAt(0).toLowerCase()+gr.week.slice(1)}</p></div>
-      <div class="j-plan"><h4>What secure people do. Tick the ones you already do.</h4>
+    <div class="j-secure" style="--c:var(--accent)">
+      <span class="eyebrow">Your game plan</span>
+      <h3>${J.pStyle?`Align with your ${STYLES[J.pStyle].name.toLowerCase()} partner`:"Know your wiring, choose well, align"}</h3>
+      <div class="j-plan"><h4>${J.pStyle?"Do this with them":"Do this with whoever you date"}</h4><ul class="plan-list">${li(J.pStyle?ALIGN[J.pStyle]:[`Say your rule out loud early: \u201c${CHILDHOOD[st].rule}\u201d It saves a lot of guessing.`,`Watch who you're drawn to. ${CHILDHOOD[st].drawn}`,`Choose for consistency over intensity.`])}</ul></div>
+      <div class="j-plan"><h4>Your side</h4><p>${YOUR_SIDE[st]}</p></div>
+      <p class="hint">${isSec?"You're already secure, which makes all of this easier.":"Growing more secure over time is one more thing that helps, whoever you're with. It's an option, not the goal."}</p>
+      ${dig(isSec?"Keep your edge: a four-week plan":"Want to build more security? A four-week plan",`<ol class="weeks">${weeks}</ol>
+        <p class="hint">Start today: ${gr.week.charAt(0).toLowerCase()+gr.week.slice(1)}</p>
+        <h4 class="mini-h">Secure habits. Tick the ones you already do.</h4>
         <div class="habits">${SECURE_HABITS.map((h,i)=>`<label class="habit" for="habit-${i}"><input type="checkbox" id="habit-${i}"><span><strong>${h[0]}</strong>${h[1]}</span></label>`).join("")}</div>
-        <p class="hint">The unticked ones are your practice list. In four weeks, retake the check and see whether your scores moved.</p></div>
+        <p class="hint">The unticked ones are your practice list.</p>`)}
     </div>
+    <p class="signoff">That's it. You know more about how you love than you did ten minutes ago.</p>
     <div class="j-links">
-      <button type="button" class="btn" data-act="retake">Retake the check later</button>
-      <button type="button" class="btn ghost" data-act="tools">Explore all the tools</button>
+      <button type="button" class="btn" data-act="tools">Explore all the tools</button>
+      <button type="button" class="btn ghost" data-act="retake">Retake the style check</button>
       <button type="button" class="btn ghost" data-act="restart">Start over</button>
     </div>`}}
 };
@@ -1484,9 +1597,10 @@ function jAct(act,v,el){
   }
   else if(act==="rel"){J.rel=v;mark(el);after(()=>{if(v==="no"){J.pStyle=null;go("matches")}else go("partnerKnow")})}
   else if(act==="pknow"){mark(el);after(()=>go(v==="yes"?"partnerPick":"partnerTraits"))}
-  else if(act==="pstyle"){J.pStyle=v;J.pViaTraits=false;J.pSafety=false;mark(el);after(()=>go("pairing"))}
+  else if(act==="pstyle"){J.pStyle=v;J.pViaTraits=false;J.pSafety=false;mark(el);after(()=>go("partnerGoal"))}
+  else if(act==="pgoal"){J.pGoal=v;mark(el);after(()=>go("pairing"))}
   else if(act==="trait"){const i=+v;J.pTraits.has(i)?J.pTraits.delete(i):J.pTraits.add(i);el.setAttribute("aria-pressed",J.pTraits.has(i));jNav()}
-  else if(act==="restart"){Object.assign(J,{screen:"intro",hist:[],goal:null,style:null,viaQuiz:false,qi:0,answers:[],rel:null,pStyle:null,pTraits:new Set(),pText:""});jRender(true)}
+  else if(act==="restart"){Object.assign(J,{pGoal:null,screen:"intro",hist:[],goal:null,style:null,viaQuiz:false,qi:0,answers:[],rel:null,pStyle:null,pTraits:new Set(),pText:""});jRender(true)}
   else if(act==="tools") openTools(true);
   else if(act==="retake"){J.qi=0;J.answers=[];go("quiz")}
   else if(act==="nextq"){J.qIdx=(J.qIdx+1)%CONNECT_QS.length;document.getElementById("ask-q").textContent=CONNECT_QS[J.qIdx]}
@@ -1504,7 +1618,7 @@ function jNav(){
 function jRender(moved){
   const sc=SCREENS[J.screen];
   document.getElementById("j-progress").innerHTML=sc.phase<0?"":PHASES.map((p,i)=>`<li class="${i<sc.phase?"done":i===sc.phase?"now":""}" data-label="${p}" ${i===sc.phase?'aria-current="step"':""}>${p}</li>`).join("");
-  jBody.innerHTML=sc.html();
+  jBody.innerHTML=sc.html()+(FACTS[J.screen]?`<aside class="dyk"><span class="picker-label">Did you know?</span><p>${FACTS[J.screen]}</p></aside>`:"");
   jBody.classList.remove("enter");void jBody.offsetWidth;jBody.classList.add("enter");
   jBody.querySelectorAll(".j-opt").forEach((b,i)=>b.insertAdjacentHTML("afterbegin",`<kbd class="key" aria-hidden="true">${KEYS[i]}</kbd>`));
   jBody.querySelectorAll("[data-act]").forEach(el=>el.onclick=()=>jAct(el.dataset.act,el.dataset.v,el));
@@ -1537,7 +1651,6 @@ function openTools(fromJourney){
   if(fromJourney&&J.style){you=J.style;goalYou=J.goal||goalYou;if(J.pStyle)them=J.pStyle;render()}
   const t=document.getElementById("tools");t.hidden=false;t.scrollIntoView({behavior:"smooth"});
 }
-document.getElementById("show-tools").onclick=()=>openTools(false);
 jRender();
 
 render();
