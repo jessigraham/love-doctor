@@ -187,6 +187,22 @@ textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border
 .tools{display:grid;gap:56px}
 .tools-head{display:grid;gap:14px}
 
+.j-compare{display:grid;gap:10px;padding:16px 18px;border-radius:12px;background:var(--bg)}
+.j-compare .axis{grid-template-columns:minmax(0,210px) 1fr 36px}
+.j-secure{display:grid;gap:14px;padding:22px;border-radius:16px;border:2px solid var(--c);background:color-mix(in srgb, var(--c) 8%, var(--surface))}
+.j-secure h3{font-size:1.5rem;color:var(--c)}
+.j-plan{display:grid;gap:10px}
+.j-plan h4{margin:0;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.weeks{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.weeks li{display:grid;grid-template-columns:72px 1fr;gap:12px;font-size:.95rem}
+.wk{font-weight:700;color:var(--c);font-variant-numeric:tabular-nums}
+.habits{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.habit{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:10px;background:var(--surface);border:1px solid var(--line);cursor:pointer;font-size:.9rem}
+.habit input{margin-top:3px;accent-color:var(--secure);width:16px;height:16px;flex:none}
+.habit span{display:grid;gap:2px}
+.habit span strong{font-weight:600}
+.habit:has(input:checked){border-color:var(--secure)}
+
 /* relationship goals */
 .goals{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px;display:grid;gap:24px}
 .goal-chips{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
@@ -252,7 +268,10 @@ td:focus-visible{outline:2px solid var(--accent)}
   .j-match{grid-template-columns:1fr}
   .j-matches .j-match{grid-template-columns:1fr auto}
   .j-matches .j-match > .hint{grid-column:1/-1}
-  .j-learn,.j-facts{grid-template-columns:1fr}
+  .j-learn,.j-facts,.habits{grid-template-columns:1fr}
+  .weeks li{grid-template-columns:1fr;gap:2px}
+  .j-compare .axis{grid-template-columns:1fr 36px}
+  .j-compare .axis .bar{grid-column:1/-1;grid-row:2}
   .journey{padding:22px}
   .j-profile{grid-template-columns:1fr}
   .grow-tabs{grid-template-columns:1fr 1fr}
@@ -1022,7 +1041,24 @@ const SELF={
   disorg:{love:"deeply and intensely, in waves.",conflict:"swing between pursuing and shutting down, sometimes in the same argument.",needs:"predictability, patience, and a partner who stays calm when you can't."}
 };
 const cap=t=>t.charAt(0).toUpperCase()+t.slice(1);
-const PHASES=["What you want","Who you are","Your relationship","Your matches","Next steps"];
+const PHASES=["What you want","Who you are","Your relationship","Your matches","Becoming secure"];
+const SECURE_HABITS=[
+  ["Say what you need, directly.","No hints, tests, or silent treatment."],
+  ["Assume good intent.","Until someone shows you otherwise."],
+  ["Repair fast.","Come back after a conflict within hours, not days."],
+  ["Hold closeness and independence together.","Needing someone and having your own life aren't opposites."],
+  ["Stay steady when they're upset.","Their mood is information, not a verdict on you."],
+  ["Choose consistent people.","Reliability is attractive, not boring."]
+];
+// average pairing score for a style across all four partner styles
+const avgFor=st=>Math.round(ORDER.reduce((n,k)=>n+PAIRS[pairKey(st,k)].score,0)/ORDER.length);
+function secureCompare(st){
+  const rows=st==="secure"
+    ?[["Secure (you)",avgFor("secure"),"--secure"],["Average of the other styles",Math.round((avgFor("anxious")+avgFor("avoidant")+avgFor("disorg"))/3),"--muted"]]
+    :[[`${STYLES[st].name} (you now)`,avgFor(st),STYLES[st].c],["Secure (where you're headed)",avgFor("secure"),"--secure"]];
+  return `<div class="j-compare"><span class="picker-label">Average compatibility across all partner styles</span>${rows.map(([n,v,c])=>
+    `<div class="axis"><span>${n}</span><div class="bar"><i style="width:${v}%;background:var(${c})"></i></div><span>${v}</span></div>`).join("")}</div>`;
+}
 const J={screen:"intro",hist:[],goal:null,style:null,viaQuiz:false,qi:0,answers:[],rel:null,pStyle:null,pViaTraits:false,pSafety:false,pTraits:new Set(),pText:""};
 const jBody=document.getElementById("j-body");
 
@@ -1106,16 +1142,20 @@ const SCREENS={
     `<div class="j-matches">${ranked.map(({k,p},i)=>`<div class="j-match" style="--c:var(${STYLES[k].c})"><div class="who"><span class="hint">${i===0?"Best fit":i===ranked.length-1?"Hardest":"#"+(i+1)}</span><strong>${STYLES[k].name}</strong></div><span class="num" style="color:${scoreColor(p.score)}">${p.score}</span><span class="hint">${p.verdict}</span></div>`).join("")}</div>
     <div class="cols"><div><h4>Green flags to look for</h4><ul>${li(m.flags)}</ul></div><div><h4>Be careful with</h4><p>${m.avoid}</p></div></div>
     <div class="tip"><strong>Looking for ${GOALS[J.goal].name.toLowerCase()}: </strong>${GOALS[J.goal].s[st]}</div>`}},
-  growth:{phase:4,next:()=>"profile",html:()=>{const g=GROW[J.style];
-    return head("Step 5",g.title,"Security can be learned. These steps are in the order most people need them.")+
-    `<div class="grow-path" style="--c:var(${STYLES[J.style].c})"><ol class="steps">${li(g.steps)}</ol></div>
+  growth:{phase:4,next:()=>"profile",html:()=>{
+    const st=J.style, g=GROW[st], isSec=st==="secure";
+    return head("Step 5",isSec?"Your biggest strength: staying secure":"The goal: becoming secure",
+      "Of the four styles, secure attachment gives the best odds with every kind of partner. It's also the one style anyone can learn.")+
+    secureCompare(st)+
+    `<p class="hint">Secure is the best match for every style, including other secure people. Becoming more secure raises your odds whoever you end up with.</p>
+    <div class="j-section"><h3>${isSec?"How to keep it":"How to get there"}</h3>
+    <div class="grow-path" style="--c:var(${STYLES[st].c})"><ol class="steps">${li(g.steps)}</ol></div></div>
     <div class="tip"><strong>Try this week: </strong>${g.week}</div>`}},
   profile:{phase:4,html:()=>{
-    const st=J.style, s=STYLES[st], m=MATCH_FOR[st], g=GOALS[J.goal], gr=GROW[st];
+    const st=J.style, s=STYLES[st], m=MATCH_FOR[st], g=GOALS[J.goal], gr=GROW[st], isSec=st==="secure";
     const best=ORDER.map(k=>({k,sc:PAIRS[pairKey(st,k)].score})).sort((a,b)=>b.sc-a.sc)[0];
     const pair=J.pStyle?PAIRS[pairKey(st,J.pStyle)]:null;
-    const steps=[...gr.steps.slice(0,3),`This week: ${gr.week}`];
-    if(pair&&pair.score<45) steps.push("Take the relationship check-in in the tools below for an honest read on whether your current relationship can work.");
+    const weeks=gr.steps.slice(0,4).map((t,i)=>`<li><span class="wk">Week ${i+1}</span>${t}</li>`).join("");
     return `<span class="eyebrow">Your results</span><h2>Your relationship profile</h2>
     <div class="j-profile">
       <div><span class="picker-label">Looking for</span><b>${g.name}</b></div>
@@ -1125,10 +1165,23 @@ const SCREENS={
     </div>
     <div class="j-section"><h3>What you learned about yourself</h3>
       <ul><li><strong>You love</strong> ${SELF[st].love}</li><li><strong>In conflict, you</strong> ${SELF[st].conflict}</li><li><strong>What sets you off:</strong> ${s.triggers.charAt(0).toLowerCase()+s.triggers.slice(1)}</li><li><strong>You need</strong> ${SELF[st].needs}</li></ul></div>
-    <div class="j-section"><h3>Who's a good match for you</h3><p>${m.text}</p><ul>${li(m.flags.map(f=>"Look for someone who "+f.charAt(0).toLowerCase()+f.slice(1)))}</ul></div>
-    <div class="j-section"><h3>Your next steps</h3><ol class="steps" style="--c:var(${s.c})">${li(steps)}</ol></div>
+    <div class="j-section"><h3>Who's a good match for you</h3><p>${m.text}</p><ul>${li(m.flags.map(f=>"Look for someone who "+f.charAt(0).toLowerCase()+f.slice(1)))}</ul>
+      ${pair&&pair.score<45?`<p class="hint">Your current pairing scores low. The relationship check-in in the tools gives an honest read on whether it can work.</p>`:""}</div>
+    <div class="j-secure" style="--c:var(--secure)">
+      <span class="eyebrow">Your most important next step</span>
+      <h3>${isSec?"Stay secure, and keep growing":"Become more secure"}</h3>
+      <p>${isSec
+        ?"You already have the style with the best odds. The work now is protecting it under stress and choosing partners who can meet you there."
+        :`This is the single change that improves your chances most. As ${s.name.toLowerCase()}, your average compatibility across all styles is ${avgFor(st)}. As secure, it's ${avgFor("secure")}. You don't need a secure partner to start; you can build it yourself.`}</p>
+      <div class="j-plan"><h4>Your four-week plan</h4><ol class="weeks">${weeks}</ol>
+        <p class="hint">Start today: ${gr.week.charAt(0).toLowerCase()+gr.week.slice(1)}</p></div>
+      <div class="j-plan"><h4>What secure people do. Tick the ones you already do.</h4>
+        <div class="habits">${SECURE_HABITS.map((h,i)=>`<label class="habit" for="habit-${i}"><input type="checkbox" id="habit-${i}"><span><strong>${h[0]}</strong>${h[1]}</span></label>`).join("")}</div>
+        <p class="hint">The unticked ones are your practice list. In four weeks, retake the check and see whether your scores moved.</p></div>
+    </div>
     <div class="j-links">
-      <button type="button" class="btn" data-act="tools">Explore all the tools</button>
+      <button type="button" class="btn" data-act="retake">Retake the check later</button>
+      <button type="button" class="btn ghost" data-act="tools">Explore all the tools</button>
       <button type="button" class="btn ghost" data-act="restart">Start over</button>
     </div>`}}
 };
@@ -1148,6 +1201,7 @@ function jAct(act,v,el){
   else if(act==="trait"){const i=+v;J.pTraits.has(i)?J.pTraits.delete(i):J.pTraits.add(i);el.setAttribute("aria-pressed",J.pTraits.has(i));jNav()}
   else if(act==="restart"){Object.assign(J,{screen:"intro",hist:[],goal:null,style:null,viaQuiz:false,qi:0,answers:[],rel:null,pStyle:null,pTraits:new Set(),pText:""});jRender(true)}
   else if(act==="tools") openTools(true);
+  else if(act==="retake"){J.qi=0;J.answers=[];go("quiz")}
 }
 function mark(el){el.parentElement.querySelectorAll("[aria-pressed]").forEach(b=>b.setAttribute("aria-pressed",b===el))}
 function jNav(){
@@ -1156,7 +1210,7 @@ function jNav(){
   back.style.visibility=J.hist.length||J.screen==="quiz"&&J.qi>0?"visible":"hidden";
   next.hidden=!sc.next;
   next.disabled=sc.canNext?!sc.canNext():false;
-  next.textContent=J.screen==="growth"?"See my profile":"Continue";
+  next.textContent=J.screen==="growth"?"See my profile and plan":"Continue";
 }
 function jRender(moved){
   const sc=SCREENS[J.screen];
