@@ -1,7 +1,7 @@
-<title>Attachment Match</title>
+<title>The Love Doctor</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&family=Newsreader:ital,opsz,wght@1,6..72,400;1,6..72,500&display=swap">
 <style>
 /* Layout: single reading column, three stacked tools (meter, self-check, field guide); meter leads */
 :root{
@@ -326,11 +326,124 @@ td:focus-visible{outline:2px solid var(--accent)}
   .gauge{justify-self:center}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ===== Design layer: "diagnostic report" identity. Sharper type, crisp edges, one heart-red accent ===== */
+:root{
+  --bg:#f2f0f3; --surface:#ffffff; --ink:#15111a; --muted:#5f5868; --line:#e1dce6;
+  --accent:#d4193f; --accent-soft:#fce6eb;
+  --secure:#0f8a6c; --anxious:#cf6410; --avoidant:#2f62c9; --disorg:#8a3fc4;
+  --good:#0f8a6c; --mid:#c08a0e; --bad:#d4193f;
+  --display:"Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+  --body:"Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --serif:"Newsreader", Georgia, serif;
+  --lift:0 1px 0 rgba(21,17,26,.04), 0 28px 60px -34px rgba(21,17,26,.28);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f0d12; --surface:#18151d; --ink:#f3eff6; --muted:#a69eb0; --line:#2b2632;
+  --accent:#ff4d6d; --accent-soft:#3b1520;
+  --secure:#3fd0a8; --anxious:#ff9a4d; --avoidant:#7aa2ff; --disorg:#c08bff;
+  --good:#3fd0a8; --mid:#f2c14e; --bad:#ff4d6d; --lift:none; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0f0d12; --surface:#18151d; --ink:#f3eff6; --muted:#a69eb0; --line:#2b2632;
+  --accent:#ff4d6d; --accent-soft:#3b1520;
+  --secure:#3fd0a8; --anxious:#ff9a4d; --avoidant:#7aa2ff; --disorg:#c08bff;
+  --good:#3fd0a8; --mid:#f2c14e; --bad:#ff4d6d; --lift:none; color-scheme:dark }
+
+body{font-family:var(--body);-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--display);font-weight:700;letter-spacing:-.025em}
+h1{font-weight:800;letter-spacing:-.035em;line-height:.98}
+h2{font-size:clamp(1.7rem,4vw,2.4rem);line-height:1.05}
+h3{font-size:1.25rem}
+.eyebrow,.picker-label,.cols h4,.card h4,.card dt,.j-facts dt,.j-plan h4,.cy-kind,.vm-h,.vm-r,.wk,.hint .mono{font-family:var(--mono);letter-spacing:.06em}
+.eyebrow{font-size:.72rem;font-weight:600}
+.picker-label{font-size:.72rem;text-transform:uppercase;font-weight:600;color:var(--muted)}
+.score,.num,.j-score .num,.j-match .num,.axis span:last-child{font-family:var(--mono);font-weight:600;letter-spacing:-.02em}
+.j-feel,.scene p,.ask-q,.card .feel{font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:0}
+.btn{border-radius:8px;font-weight:600;letter-spacing:.01em;transition:transform .12s, background .15s}
+.btn:not([disabled]):hover{transform:translateY(-1px)}
+.btn.big{padding:16px 34px;font-size:1.05rem;background:var(--accent);color:#fff}
+.btn.ghost{border-width:1px}
+.result,.reality,.reader,.grow,.goals,.quiz,.card,.cycle,.j-secure{border-radius:12px}
+.chip,.trait,.j-opt,.node,.vm-cell,.practice,.j-facts div,.j-profile div,.j-learn li,.habit,.j-match,.j-mdet{border-radius:8px}
+
+/* brand bar */
+.brand{padding-bottom:14px;border-bottom:1px solid var(--line)}
+.brand-mark{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:1.15rem;letter-spacing:-.02em;color:var(--ink)}
+.brand-mark svg{width:34px;height:20px;flex:none}
+.brand-mark small{font-family:var(--mono);font-size:.68rem;font-weight:500;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;padding-left:10px;border-left:1px solid var(--line)}
+
+/* the journey stage */
+.journey{max-width:880px;border:1px solid var(--line);border-radius:16px;box-shadow:var(--lift);padding:40px 44px;gap:28px;background:var(--surface)}
+.j-progress{gap:4px;counter-reset:ph}
+.j-progress li{counter-increment:ph;font-family:var(--mono);font-size:.68rem;letter-spacing:.04em;text-transform:uppercase;font-weight:500;gap:8px}
+.j-progress li::before{height:3px;border-radius:0}
+.j-progress li::after{content:counter(ph,decimal-leading-zero) "  " attr(data-label);white-space:pre}
+.j-progress li{font-size:0}
+.j-progress li::after{font-size:.68rem}
+.j-body{gap:20px}
+.j-body .lede{font-size:1.08rem;max-width:58ch}
+.j-nav{border-top:1px solid var(--line);align-items:center}
+.j-keys{font-family:var(--mono);font-size:.7rem;color:var(--muted);letter-spacing:.04em}
+.j-keys kbd{font-family:var(--mono);font-size:.68rem;padding:1px 6px;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;background:var(--bg);color:var(--ink)}
+
+/* options with letter keys */
+.j-options{gap:10px}
+.j-opt{grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;padding:16px 18px;border:1px solid var(--line);background:var(--surface);transition:border-color .15s, transform .12s, box-shadow .15s}
+.j-opt > :not(.key){grid-column:2}
+.j-opt > .key{grid-row:1 / span 3;align-self:start;display:grid;place-items:center;width:26px;height:26px;border-radius:6px;border:1px solid var(--line);font-family:var(--mono);font-size:.75rem;font-weight:600;color:var(--muted);background:var(--bg)}
+.j-opt:hover{border-color:var(--ink);transform:translateY(-1px);box-shadow:var(--lift)}
+.j-opt[aria-pressed="true"]{border-color:var(--c, var(--accent));box-shadow:inset 0 0 0 1px var(--c, var(--accent))}
+.j-opt[aria-pressed="true"] > .key{background:var(--c, var(--accent));border-color:var(--c, var(--accent));color:#fff}
+.j-opt strong{font-family:var(--display);font-weight:700;font-size:1.05rem;letter-spacing:-.01em}
+
+/* quiz scale */
+.j-scale{gap:10px}
+.j-scale button{width:54px;height:54px;border-radius:10px;font-family:var(--mono);font-size:1rem;border-width:1px;background:var(--surface)}
+.j-scale button:hover{border-color:var(--ink)}
+.j-qbar{height:3px;border-radius:0}
+.j-q{font-family:var(--display);font-weight:600;letter-spacing:-.02em;font-size:clamp(1.4rem,3.6vw,2rem);line-height:1.15;max-width:30ch}
+
+/* intro hero */
+.hero{display:grid;gap:22px}
+.hero h1{font-size:clamp(2.6rem,7.2vw,4.6rem)}
+.hero h1 em{font-family:var(--serif);font-weight:400;font-style:italic;letter-spacing:-.01em;color:var(--accent)}
+.ecg{width:100%;height:auto;display:block;max-width:100%}
+.ecg .base{stroke:var(--line);stroke-width:2;fill:none}
+.ecg .pulse{stroke:var(--accent);stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:140 1400;animation:pulse 3.2s linear infinite}
+@keyframes pulse{from{stroke-dashoffset:140}to{stroke-dashoffset:-1260}}
+.j-learn{counter-reset:lr;gap:0;border-top:1px solid var(--line)}
+.j-learn li{counter-increment:lr;background:none;border-radius:0;border-bottom:1px solid var(--line);padding:14px 0 14px 44px;position:relative}
+.j-learn li::before{content:counter(lr,decimal-leading-zero);position:absolute;left:0;top:15px;font-family:var(--mono);font-size:.78rem;color:var(--accent);font-weight:600}
+.j-learn li:nth-child(odd){padding-right:20px}
+.hero-cta{display:flex;flex-wrap:wrap;align-items:center;gap:16px}
+
+/* results */
+.j-score{border:1px solid var(--line);background:var(--surface)}
+.j-score .num{font-size:3.4rem}
+.j-profile div{border:1px solid var(--line);background:var(--surface)}
+.j-profile b{font-family:var(--display);font-weight:700;font-size:1.3rem;letter-spacing:-.02em}
+.j-section{padding-top:22px}
+.tip{border-radius:8px;border-left:3px solid var(--accent);background:var(--accent-soft)}
+.cycle{border-width:1px}
+.cy-name{font-family:var(--display);font-weight:700;letter-spacing:-.015em}
+.node{background:var(--surface)}
+.j-secure{border-width:1px;box-shadow:inset 0 3px 0 var(--c)}
+.j-secure h3{font-size:1.8rem}
+.askbox{border-style:solid;border-width:1px;border-color:var(--line);background:var(--bg);border-radius:12px}
+.strengths li{border-radius:6px;font-family:var(--mono);font-size:.8rem;letter-spacing:.02em}
+
+@media (max-width:720px){
+  .journey{padding:24px 18px;border-radius:12px}
+  .j-progress li::after{content:counter(ph,decimal-leading-zero)}
+  .j-keys{display:none}
+  .j-learn li:nth-child(odd){padding-right:0}
+}
 </style>
 
 <div class="wrap">
   <header class="brand">
-    <span class="eyebrow">Attachment Match</span>
+    <span class="brand-mark"><svg viewBox="0 0 34 20" aria-hidden="true"><path d="M0 12h8l3-8 4 14 3-9 2 3h14" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>The Love Doctor<small>Attachment &amp; compatibility</small></span>
     <button type="button" class="linkish" id="show-tools">Skip to all tools</button>
   </header>
 
@@ -339,6 +452,7 @@ td:focus-visible{outline:2px solid var(--accent)}
     <div class="j-body" id="j-body" aria-live="polite"></div>
     <div class="j-nav" id="j-nav">
       <button class="btn ghost" type="button" id="j-back">Back</button>
+      <span class="j-keys" id="j-keys">Press <kbd>A</kbd>–<kbd>H</kbd> to choose</span>
       <button class="btn" type="button" id="j-next">Continue</button>
     </div>
   </section>
@@ -1234,16 +1348,22 @@ const opt=(act,v,on,title,sub="",c="")=>`<button type="button" class="j-opt" ${c
 const head=(eyebrow,title,lede="")=>`<span class="eyebrow">${eyebrow}</span><h2>${title}</h2>${lede?`<p class="lede">${lede}</p>`:""}`;
 
 const SCREENS={
-  intro:{phase:-1,html:()=>`<span class="eyebrow">A five-minute self-discovery</span>
-    <h1>How do you love, and who's right for you?</h1>
-    <p class="lede">You'll go one step at a time through what you want in a relationship, how you attach to people, who pairs well with you, and how to grow more secure. Nothing you answer is saved.</p>
+  intro:{phase:-1,html:()=>`<div class="hero">
+    <span class="eyebrow">A five-minute self-discovery</span>
+    <h1>How do you love, and who's <em>right</em> for you?</h1>
+    <svg class="ecg" viewBox="0 0 800 70" aria-hidden="true">
+      <path class="base" d="M0 40 H250 l10 0 8 -26 10 50 8 -24 H330 C330 20 352 18 360 32 C368 18 390 20 390 40 L360 64 L330 40 H470 l10 0 8 -30 10 54 8 -24 H800"/>
+      <path class="pulse" pathLength="1400" d="M0 40 H250 l10 0 8 -26 10 50 8 -24 H330 C330 20 352 18 360 32 C368 18 390 20 390 40 L360 64 L330 40 H470 l10 0 8 -30 10 54 8 -24 H800"/>
+    </svg>
+    <p class="lede">One step at a time, you'll look at what you want in a relationship, how you attach to people, who pairs well with you, and how to grow more secure and connected. Nothing you answer is saved.</p>
     <ul class="j-learn">
       <li><strong>Your attachment style</strong><span>Pick it, or answer twelve quick statements to find it</span></li>
-      <li><strong>Who's a good match</strong><span>Which styles fit you, and the green flags to look for</span></li>
+      <li><strong>Who's a good match</strong><span>Which styles fit you, and the cycles each pairing falls into</span></li>
       <li><strong>Your current relationship</strong><span>If you're with someone, how the two of you tend to pair</span></li>
-      <li><strong>Your next steps</strong><span>How to grow more secure and build deeper connection</span></li>
+      <li><strong>Your next steps</strong><span>A plan to grow more secure and build deeper connection</span></li>
     </ul>
-    <button type="button" class="btn big" data-act="start">Start</button>`},
+    <div class="hero-cta"><button type="button" class="btn big" data-act="start">Start the journey</button><span class="j-keys">or press <kbd>Enter</kbd></span></div>
+  </div>`},
   goal:{phase:0,html:()=>head("Step 1","What kind of relationship are you looking for?","Pick what's closest to true right now.")+
     `<div class="j-options">${GOAL_ORDER.map(k=>opt("goal",k,J.goal===k,GOALS[k].name,GOALS[k].desc)).join("")}</div>`},
   knowStyle:{phase:1,html:()=>head("Step 2","Do you know your attachment style?","Attachment style is the pattern you fall into with people you're close to, especially when you feel unsure of them. There are four: secure, anxious, avoidant, and disorganized.")+
@@ -1377,14 +1497,16 @@ function jNav(){
   document.getElementById("j-nav").hidden=J.screen==="intro";
   back.style.visibility=J.hist.length||J.screen==="quiz"&&J.qi>0?"visible":"hidden";
   next.hidden=!sc.next;
+  const kh=document.getElementById("j-keys");kh.innerHTML=J.screen==="quiz"?"Press <kbd>1</kbd>–<kbd>5</kbd> to answer":sc.next?"Press <kbd>Enter</kbd> to continue":"Press a letter to choose";
   next.disabled=sc.canNext?!sc.canNext():false;
   next.textContent=J.screen==="connect"?"See my profile and plan":"Continue";
 }
 function jRender(moved){
   const sc=SCREENS[J.screen];
-  document.getElementById("j-progress").innerHTML=sc.phase<0?"":PHASES.map((p,i)=>`<li class="${i<sc.phase?"done":i===sc.phase?"now":""}" ${i===sc.phase?'aria-current="step"':""}>${p}</li>`).join("");
+  document.getElementById("j-progress").innerHTML=sc.phase<0?"":PHASES.map((p,i)=>`<li class="${i<sc.phase?"done":i===sc.phase?"now":""}" data-label="${p}" ${i===sc.phase?'aria-current="step"':""}>${p}</li>`).join("");
   jBody.innerHTML=sc.html();
   jBody.classList.remove("enter");void jBody.offsetWidth;jBody.classList.add("enter");
+  jBody.querySelectorAll(".j-opt").forEach((b,i)=>b.insertAdjacentHTML("afterbegin",`<kbd class="key" aria-hidden="true">${KEYS[i]}</kbd>`));
   jBody.querySelectorAll("[data-act]").forEach(el=>el.onclick=()=>jAct(el.dataset.act,el.dataset.v,el));
   const ta=document.getElementById("j-ptext");
   if(ta){ta.value=J.pText;ta.oninput=()=>{J.pText=ta.value;jNav()}}
@@ -1396,6 +1518,20 @@ document.getElementById("j-next").onclick=()=>{
   go(SCREENS[J.screen].next());
 };
 document.getElementById("j-back").onclick=jBack;
+const KEYS="ABCDEFGH";
+// keyboard: letters pick options, 1-5 answer the quiz, Enter continues
+document.addEventListener("keydown",e=>{
+  if(e.metaKey||e.ctrlKey||e.altKey||e.target.closest("textarea,input,select"))return;
+  const j=document.getElementById("journey").getBoundingClientRect();
+  if(j.bottom<0||j.top>innerHeight)return;
+  if(J.screen==="quiz"&&/^[1-5]$/.test(e.key)){jBody.querySelector(`[data-act="ans"][data-v="${e.key}"]`)?.click();return}
+  const i=KEYS.indexOf(e.key.toUpperCase());
+  if(e.key.length===1&&i>=0){const o=jBody.querySelectorAll(".j-opt")[i];if(o){e.preventDefault();o.click()}return}
+  if(e.key==="Enter"&&!e.target.closest("button,a,summary,label")){
+    if(J.screen==="intro"){go("goal");return}
+    const n=document.getElementById("j-next");if(!n.hidden&&!n.disabled)n.click();
+  }
+});
 function openTools(fromJourney){
   if(fromJourney&&J.style){you=J.style;goalYou=J.goal||goalYou;if(J.pStyle)them=J.pStyle;render()}
   const t=document.getElementById("tools");t.hidden=false;t.scrollIntoView({behavior:"smooth"});
