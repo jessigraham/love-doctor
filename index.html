@@ -388,7 +388,7 @@ h3{font-size:1.25rem}
 .j-keys kbd{font-family:var(--mono);font-size:.68rem;padding:1px 6px;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;background:var(--bg);color:var(--ink)}
 
 /* options with letter keys */
-.j-options{gap:10px}
+.j-options{gap:10px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
 .j-opt{grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;padding:16px 18px;border:1px solid var(--line);background:var(--surface);transition:border-color .15s, transform .12s, box-shadow .15s}
 .j-opt > :not(.key){grid-column:2}
 .j-opt > .key{grid-row:1 / span 3;align-self:start;display:grid;place-items:center;width:26px;height:26px;border-radius:6px;border:1px solid var(--line);font-family:var(--mono);font-size:.75rem;font-weight:600;color:var(--muted);background:var(--bg)}
@@ -409,7 +409,7 @@ h3{font-size:1.25rem}
 .hero h1{font-size:clamp(2.6rem,7.2vw,4.6rem)}
 .hero h1 em{font-family:var(--serif);font-weight:400;font-style:italic;letter-spacing:-.01em;color:var(--accent)}
 .ecg{width:100%;height:auto;display:block;max-width:100%}
-.ecg .base{stroke:var(--line);stroke-width:2;fill:none}
+.ecg .base{stroke:var(--muted);stroke-opacity:.45;stroke-width:2;fill:none}
 .ecg .pulse{stroke:var(--accent);stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:140 1400;animation:pulse 3.2s linear infinite}
 @keyframes pulse{from{stroke-dashoffset:140}to{stroke-dashoffset:-1260}}
 .j-learn{counter-reset:lr;gap:0;border-top:1px solid var(--line)}
