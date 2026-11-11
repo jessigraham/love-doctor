@@ -203,6 +203,32 @@ textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border
 .habit span strong{font-weight:600}
 .habit:has(input:checked){border-color:var(--secure)}
 
+/* cycles */
+.cycles{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.cycle{display:grid;gap:10px;padding:16px;border-radius:14px;border:1.5px solid var(--cy);background:color-mix(in srgb, var(--cy) 7%, var(--surface));min-width:0;align-content:start}
+.cycle.stuck{--cy:var(--bad)}
+.cycle.healthy{--cy:var(--good)}
+.cy-kind{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--cy)}
+.cy-name{margin:0;font-family:var(--display);font-weight:400;font-size:1.15rem}
+.loop{display:grid;grid-template-columns:minmax(0,1fr) 22px minmax(0,1fr);grid-template-rows:auto 34px auto;align-items:center;gap:4px}
+.node{font-size:.84rem;line-height:1.35;padding:9px 10px;border-radius:10px;background:var(--surface);border:1px solid var(--line);align-self:stretch;display:grid;gap:3px}
+.node b{font-size:.7rem;color:var(--cy)}
+.arr{color:var(--cy);font-weight:700;text-align:center;font-size:1.05rem}
+.n1{grid-area:1/1}.a12{grid-area:1/2}.n2{grid-area:1/3}
+.a41{grid-area:2/1}.hub{grid-area:2/2;display:grid;justify-items:center;color:var(--cy);font-size:1.3rem;line-height:1}.a23{grid-area:2/3}
+.n4{grid-area:3/1}.a34{grid-area:3/2}.n3{grid-area:3/3}
+.hub small{font-size:.6rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.cy-fix{font-size:.88rem}
+.cy-fix strong{color:var(--cy)}
+.j-mdet{border-radius:12px;background:var(--bg)}
+.j-mdet > summary{list-style:none;cursor:pointer;background:none}
+.j-mdet > summary::-webkit-details-marker{display:none}
+.j-mdet > summary::after{content:"\25BE";color:var(--muted);justify-self:end;transition:transform .2s}
+.j-mdet[open] > summary::after{transform:rotate(180deg)}
+.j-mdet > summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:12px}
+.j-mdet > .cycles{padding:0 12px 12px}
+.j-matches .j-match{grid-template-columns:1fr auto 130px 16px}
+
 /* relationship goals */
 .goals{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px;display:grid;gap:24px}
 .goal-chips{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
@@ -266,9 +292,10 @@ td:focus-visible{outline:2px solid var(--accent)}
   .result,.reality,.reader,.grow,.goals,.journey{padding:20px}
   .j-progress li{font-size:0}
   .j-match{grid-template-columns:1fr}
-  .j-matches .j-match{grid-template-columns:1fr auto}
+  .j-matches .j-match{grid-template-columns:1fr auto 16px}
   .j-matches .j-match > .hint{grid-column:1/-1}
-  .j-learn,.j-facts,.habits{grid-template-columns:1fr}
+  .j-mdet > summary::after{grid-row:1;grid-column:3}
+  .j-learn,.j-facts,.habits,.cycles{grid-template-columns:1fr}
   .weeks li{grid-template-columns:1fr;gap:2px}
   .j-compare .axis{grid-template-columns:1fr 36px}
   .j-compare .axis .bar{grid-column:1/-1;grid-row:2}
@@ -343,6 +370,7 @@ td:focus-visible{outline:2px solid var(--accent)}
         <div class="pair-title"><h3 id="pair-name"></h3></div>
         <p id="pair-summary"></p>
         <blockquote class="scene"><span class="picker-label">A typical moment</span><p id="pair-scene"></p></blockquote>
+        <div id="pair-cycles"></div>
         <div class="cols">
           <div><h4>What works</h4><ul id="pair-works"></ul></div>
           <div><h4>Where it gets hard</h4><ul id="pair-hard"></ul></div>
@@ -613,6 +641,51 @@ const SCENES={
   "avoidant|disorg":"The disorganized partner reaches out after a hard day. The avoidant partner replies “ok” hours later, which lands as proof they don't care.",
   "disorg|disorg":"A small disagreement about plans becomes “maybe we should just break up,” then an intense makeup a day later. Then it happens again."
 };
+// the loop each pairing falls into when it isn't working, and the one it can build instead
+const CYCLES={
+  "secure|secure":{
+    stuck:{name:"The comfortable drift",steps:["Life gets busy","Dates and check-ins quietly stop","You feel more like teammates than partners","Nobody raises it, because nothing is “wrong”"],fix:"Protect one ritual each week that is only about the two of you."},
+    healthy:{name:"The trust loop",steps:["One of you shares a need","The other responds","Trust grows","Sharing the next need feels easier"],fix:"Keep saying the small things out loud."}},
+  "secure|anxious":{
+    stuck:{name:"The reassurance treadmill",steps:["Anxious partner feels a flicker of doubt","They ask for reassurance","Secure partner reassures, a little more tired each time","Relief fades and the doubt comes back"],fix:"The anxious partner builds ways to calm down alone. The secure partner names the pattern kindly instead of just repeating the reassurance."},
+    healthy:{name:"The steadying loop",steps:["Anxious partner names the fear directly","Secure partner responds calmly and on time","The anxious alarm quiets","They need to ask less often"],fix:"Consistency, especially when nothing is wrong."}},
+  "secure|avoidant":{
+    stuck:{name:"The polite distance",steps:["Avoidant partner keeps feelings to themselves","Secure partner stops asking so they don't push","Things run smoothly but stay shallow","Secure partner quietly feels lonely"],fix:"The secure partner says they want more depth, clearly and without blame."},
+    healthy:{name:"The safe-space loop",steps:["Avoidant partner takes space","Secure partner allows it without punishment","Avoidant partner comes back sooner and more open","Closeness feels less risky next time"],fix:"Make space predictable: “Take your time, I'm here.”"}},
+  "secure|disorg":{
+    stuck:{name:"The caretaker loop",steps:["Disorganized partner swings away or lashes out","Secure partner stays calm and soothes","Secure partner takes on more of the emotional work","Resentment builds quietly on the secure side"],fix:"The secure partner keeps boundaries. The disorganized partner gets support of their own."},
+    healthy:{name:"The proof-of-safety loop",steps:["Disorganized partner expects to be let down","Secure partner stays steady anyway","That expectation weakens a little","Trust grows, one steady moment at a time"],fix:"Predictability over grand gestures."}},
+  "anxious|anxious":{
+    stuck:{name:"The worry echo",steps:["One partner reads a short text as anger","They pull back or get sharp","The other reads that as rejection","Both escalate, each needing reassurance the other can't give"],fix:"Agree on a phrase that means “I'm worried, not angry,” and each calm down before reaching out."},
+    healthy:{name:"The mutual reassurance loop",steps:["One partner says “I'm feeling insecure”","The other reassures without taking it personally","Both feel safer","Worries get named earlier, while they're small"],fix:"Name fears early, before they turn into accusations."}},
+  "anxious|avoidant":{
+    stuck:{name:"The pursue-withdraw trap",steps:["Anxious partner reaches for closeness","Avoidant partner feels crowded and pulls back","Anxious partner panics and pursues harder","Avoidant partner shuts down further"],fix:"Name the cycle together as the problem. The anxious partner pauses the chase; the avoidant partner says when they'll come back."},
+    healthy:{name:"The space-and-return loop",steps:["Avoidant partner says “I need an hour, then let's talk”","Anxious partner trusts the time frame","Avoidant partner comes back as promised","Both trust the pattern a little more"],fix:"Keep every promise about coming back."}},
+  "anxious|disorg":{
+    stuck:{name:"The whiplash cycle",steps:["Disorganized partner pulls close, intensely","Anxious partner relaxes and leans in","Disorganized partner panics and pulls away","Anxious partner chases, confirming the fear"],fix:"Slow everything down. Individual support for both partners helps a lot."},
+    healthy:{name:"The slow-and-steady loop",steps:["Both agree to slow the pace","Big feelings get named, not acted on","Each calm moment builds trust","The swings get smaller"],fix:"Talk about the swings when things are calm."}},
+  "avoidant|avoidant":{
+    stuck:{name:"The silent drift",steps:["Something bothers both of you","Neither brings it up","Distance grows without a single fight","It starts to feel like living with a roommate"],fix:"Schedule check-ins so neither of you has to start the hard conversation alone."},
+    healthy:{name:"The respectful-space loop",steps:["Each keeps their own life","You share one real thing a week","Closeness grows without pressure","Opening up feels a little safer"],fix:"Make sharing a routine, not an event."}},
+  "avoidant|disorg":{
+    stuck:{name:"The reach-and-retreat cycle",steps:["Disorganized partner reaches out after a hard day","Avoidant partner replies late or briefly","Disorganized partner feels abandoned and reacts strongly","Avoidant partner withdraws further"],fix:"The avoidant partner sends a quick “Got it, call you at 8.” Small and predictable beats perfect."},
+    healthy:{name:"The clear-signals loop",steps:["Space is announced, not taken silently","Disorganized partner knows when contact returns","The fear of abandonment eases","Both feel safer saying what they need"],fix:"Say out loud when you need distance and when you'll be back."}},
+  "disorg|disorg":{
+    stuck:{name:"The storm cycle",steps:["Closeness feels good, then frightening","One partner pushes away","The other panics and clings or lashes out","A dramatic breakup, then an intense reunion"],fix:"Individual therapy for both, and one rule: no big decisions in the middle of a storm."},
+    healthy:{name:"The calm-down loop",steps:["One partner notices the alarm rising","They call a pause instead of reacting","Both come back once calm","Each storm is a little shorter"],fix:"Use the same pause word every time."}}
+};
+// draws a four-step loop: 1 -> 2 down to 3 -> 4 and back up to 1
+function loopHTML(c,kind){
+  const [a,b,d,e]=c.steps;
+  return `<div class="cycle ${kind}"><span class="cy-kind">${kind==="stuck"?"When it doesn't work":"When it works"}</span><h4 class="cy-name">${c.name}</h4>
+    <div class="loop" role="list" aria-label="${c.name}, a repeating cycle">
+      <div class="node n1" role="listitem"><b>1</b>${a}</div><span class="arr a12" aria-hidden="true">→</span><div class="node n2" role="listitem"><b>2</b>${b}</div>
+      <span class="arr a41" aria-hidden="true">↑</span><span class="hub" aria-hidden="true">${kind==="stuck"?"↻":"↻"}<small>${kind==="stuck"?"repeats":"builds"}</small></span><span class="arr a23" aria-hidden="true">↓</span>
+      <div class="node n4" role="listitem"><b>4</b>${e}</div><span class="arr a34" aria-hidden="true">←</span><div class="node n3" role="listitem"><b>3</b>${d}</div>
+    </div>
+    <p class="cy-fix"><strong>${kind==="stuck"?"How to break it: ":"How to keep it going: "}</strong>${c.fix}</p></div>`;
+}
+function cyclesHTML(key){const c=CYCLES[key];return `<div class="cycles">${loopHTML(c.stuck,"stuck")}${loopHTML(c.healthy,"healthy")}</div>`}
 const pairKey=(a,b)=>ORDER.indexOf(a)<=ORDER.indexOf(b)?`${a}|${b}`:`${b}|${a}`;
 const scoreColor=s=>s>=70?"var(--good)":s>=45?"var(--mid)":"var(--bad)";
 
@@ -642,6 +715,7 @@ function render(){
   document.getElementById("pair-name").textContent=`${STYLES[you].name} + ${STYLES[them].name}`;
   document.getElementById("pair-summary").textContent=p.summary;
   document.getElementById("pair-scene").textContent=SCENES[pairKey(you,them)];
+  document.getElementById("pair-cycles").innerHTML=cyclesHTML(pairKey(you,them));
   document.getElementById("pair-works").innerHTML=li(p.works);
   document.getElementById("pair-hard").innerHTML=li(p.hard);
   document.getElementById("pair-tip").textContent=p.tip;
@@ -1133,13 +1207,15 @@ const SCREENS={
     (J.pViaTraits?`<p class="hint">From what you shared, your partner most likely leans <strong style="color:var(${ps.c})">${ps.name.toLowerCase()}</strong>. That's a best guess, not a verdict.</p>`:"")+
     `<div class="j-score"><span class="num" style="color:${scoreColor(p.score)}">${p.score}</span><div><strong style="color:${scoreColor(p.score)}">${p.verdict}</strong><p>${p.summary}</p></div></div>
     <blockquote class="scene"><span class="picker-label">A typical moment</span><p>${SCENES[pairKey(J.style,J.pStyle)]}</p></blockquote>
+    <div class="j-section"><h3>The cycles you two can fall into</h3><p class="hint">Every couple repeats patterns. Learn to spot the first loop early, and practice the second until it becomes the default.</p>${cyclesHTML(pairKey(J.style,J.pStyle))}</div>
     <div class="cols"><div><h4>What works</h4><ul>${li(p.works)}</ul></div><div><h4>Where it gets hard</h4><ul>${li(p.hard)}</ul></div></div>
     <div class="tip"><strong>What helps: </strong>${p.tip}</div>
     ${J.pSafety?`<div class="safety">Some of what you described, like fear, control, or being cut off from people, goes beyond attachment style. In the US, the National Domestic Violence Hotline is free and confidential, 24/7: <span class="hotline">1-800-799-7233</span>, or text <span class="hotline">START</span> to <span class="hotline">88788</span>.</div>`:""}`}},
   matches:{phase:3,next:()=>"growth",html:()=>{
     const st=J.style, m=MATCH_FOR[st], ranked=ORDER.map(k=>({k,p:PAIRS[pairKey(st,k)]})).sort((a,b)=>b.p.score-a.p.score);
     return head("Step 4",`Who's a good match for you`,m.text)+
-    `<div class="j-matches">${ranked.map(({k,p},i)=>`<div class="j-match" style="--c:var(${STYLES[k].c})"><div class="who"><span class="hint">${i===0?"Best fit":i===ranked.length-1?"Hardest":"#"+(i+1)}</span><strong>${STYLES[k].name}</strong></div><span class="num" style="color:${scoreColor(p.score)}">${p.score}</span><span class="hint">${p.verdict}</span></div>`).join("")}</div>
+    `<p class="hint">Tap any match to see the cycle it gets stuck in, and the one that works.</p>
+    <div class="j-matches">${ranked.map(({k,p},i)=>`<details class="j-mdet" ${i===ranked.length-1?"open":""}><summary class="j-match" style="--c:var(${STYLES[k].c})"><div class="who"><span class="hint">${i===0?"Best fit":i===ranked.length-1?"Hardest":"#"+(i+1)}</span><strong>${STYLES[k].name}</strong></div><span class="num" style="color:${scoreColor(p.score)}">${p.score}</span><span class="hint">${p.verdict}</span></summary>${cyclesHTML(pairKey(st,k))}</details>`).join("")}</div>
     <div class="cols"><div><h4>Green flags to look for</h4><ul>${li(m.flags)}</ul></div><div><h4>Be careful with</h4><p>${m.avoid}</p></div></div>
     <div class="tip"><strong>Looking for ${GOALS[J.goal].name.toLowerCase()}: </strong>${GOALS[J.goal].s[st]}</div>`}},
   growth:{phase:4,next:()=>"profile",html:()=>{
