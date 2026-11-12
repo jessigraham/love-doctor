@@ -53,7 +53,7 @@ section{display:grid;gap:20px;scroll-margin-top:16px}
 .chip .dot{width:10px;height:10px;border-radius:50%;flex:none;background:var(--c)}
 .chip:hover{border-color:var(--c)}
 .chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.chip[aria-pressed="true"]{border-color:var(--c);background:color-mix(in srgb, var(--c) 12%, var(--surface))}
+.chip[aria-pressed="true"]{border-color:var(--c);background:var(--bg);background:color-mix(in srgb, var(--c) 12%, var(--surface))}
 
 .result{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px;
   display:grid;grid-template-columns:minmax(0,280px) minmax(0,1fr);gap:32px;align-items:start}
@@ -135,7 +135,7 @@ textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border
 .j-opt span{font-size:.86rem;color:var(--muted);line-height:1.4}
 .j-opt:hover{border-color:var(--c, var(--accent))}
 .j-opt:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.j-opt[aria-pressed="true"]{border-color:var(--c, var(--accent));background:color-mix(in srgb, var(--c, var(--accent)) 12%, var(--surface))}
+.j-opt[aria-pressed="true"]{border-color:var(--c, var(--accent));background:var(--bg);background:color-mix(in srgb, var(--c, var(--accent)) 12%, var(--surface))}
 .j-opt.big{padding:20px}
 .j-q{font-family:var(--display);font-size:clamp(1.2rem,3vw,1.5rem);line-height:1.3;max-width:40ch;min-height:3.9em}
 .j-scale{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
@@ -189,7 +189,7 @@ textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border
 
 .j-compare{display:grid;gap:10px;padding:16px 18px;border-radius:12px;background:var(--bg)}
 .j-compare .axis{grid-template-columns:minmax(0,210px) 1fr 36px}
-.j-secure{display:grid;gap:14px;padding:22px;border-radius:16px;border:2px solid var(--c);background:color-mix(in srgb, var(--c) 8%, var(--surface))}
+.j-secure{display:grid;gap:14px;padding:22px;border-radius:16px;border:2px solid var(--c);background:var(--bg);background:color-mix(in srgb, var(--c) 8%, var(--surface))}
 .j-secure h3{font-size:1.5rem;color:var(--c)}
 .j-plan{display:grid;gap:10px}
 .j-plan h4{margin:0;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
@@ -216,10 +216,10 @@ textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border
 .vm-r{writing-mode:vertical-rl;transform:rotate(180deg);align-self:center}
 .vm-cell{padding:12px;border-radius:10px;background:var(--bg);border:1.5px solid var(--line);display:grid;gap:4px;font-size:.82rem;line-height:1.35;color:var(--muted)}
 .vm-cell strong{color:var(--c);font-size:.95rem}
-.vm-cell.on{border-color:var(--c);background:color-mix(in srgb, var(--c) 14%, var(--surface));color:var(--ink)}
+.vm-cell.on{border-color:var(--c);background:var(--bg);background:color-mix(in srgb, var(--c) 14%, var(--surface));color:var(--ink)}
 .note a{color:var(--accent)}
 .strengths,.j-section .strengths{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:8px}
-.strengths li{padding:6px 12px;border-radius:999px;background:color-mix(in srgb, var(--secure) 14%, var(--surface));font-size:.88rem;font-weight:500}
+.strengths li{padding:6px 12px;border-radius:999px;background:var(--bg);background:color-mix(in srgb, var(--secure) 14%, var(--surface));font-size:.88rem;font-weight:500}
 .support{display:grid;gap:8px;padding:16px 18px;border-radius:12px;border:1px solid var(--line);font-size:.93rem}
 .support ul{margin:0;padding-left:18px;display:grid;gap:4px}
 
@@ -245,7 +245,7 @@ textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border
 .roots{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .root{display:grid;gap:6px;align-content:start;padding:14px 16px;border-radius:8px;border:1px solid var(--line);background:var(--surface);min-width:0}
 .root p{font-size:.95rem}
-.root.rule{border-color:var(--c, var(--accent));background:color-mix(in srgb, var(--c, var(--accent)) 7%, var(--surface))}
+.root.rule{border-color:var(--c, var(--accent));background:var(--bg);background:color-mix(in srgb, var(--c, var(--accent)) 7%, var(--surface))}
 .rule-q{font-family:var(--serif);font-style:italic;font-size:1.15rem;line-height:1.3}
 .align-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .align-all{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -256,7 +256,7 @@ textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border
 
 /* cycles */
 .cycles{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.cycle{display:grid;gap:10px;padding:16px;border-radius:14px;border:1.5px solid var(--cy);background:color-mix(in srgb, var(--cy) 7%, var(--surface));min-width:0;align-content:start}
+.cycle{display:grid;gap:10px;padding:16px;border-radius:14px;border:1.5px solid var(--cy);background:var(--bg);background:color-mix(in srgb, var(--cy) 7%, var(--surface));min-width:0;align-content:start}
 .cycle.stuck{--cy:var(--bad)}
 .cycle.healthy{--cy:var(--good)}
 .cy-kind{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--cy)}
@@ -295,7 +295,7 @@ textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border
 .grow-path h3{color:var(--c)}
 .steps{margin:0;padding:0;list-style:none;counter-reset:step;display:grid;gap:10px}
 .steps li{counter-increment:step;display:grid;grid-template-columns:32px 1fr;gap:12px;align-items:start}
-.steps li::before{content:counter(step);display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:color-mix(in srgb, var(--c) 15%, var(--surface));color:var(--c);font-weight:700;font-size:.85rem}
+.steps li::before{content:counter(step);display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--bg);background:color-mix(in srgb, var(--c) 15%, var(--surface));color:var(--c);font-weight:700;font-size:.85rem}
 .grow-more{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .panel{display:grid;gap:10px;align-content:start;min-width:0;padding-top:16px;border-top:2px solid var(--ink)}
 .panel ul{margin:0;padding-left:18px;display:grid;gap:8px;font-size:.93rem}
@@ -305,7 +305,7 @@ textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border
 table{border-collapse:separate;border-spacing:4px;font-size:.88rem;min-width:520px;width:100%}
 th{font-weight:600;color:var(--muted);text-align:left;padding:6px 8px}
 td{text-align:center;padding:12px 6px;border-radius:8px;font-weight:600;font-variant-numeric:tabular-nums;cursor:pointer;
-  background:color-mix(in srgb, var(--h) 18%, var(--surface));color:var(--ink);border:1.5px solid transparent}
+  background:var(--bg);background:color-mix(in srgb, var(--h) 18%, var(--surface));color:var(--ink);border:1.5px solid transparent}
 td:hover,td.on{border-color:var(--h)}
 td:focus-visible{outline:2px solid var(--accent)}
 
@@ -469,6 +469,56 @@ h3{font-size:1.25rem}
   .j-progress li::after{content:counter(ph,decimal-leading-zero)}
   .j-keys{display:none}
   .j-learn li:nth-child(odd){padding-right:0}
+}
+
+/* ===== Phones, touch and cross-browser (Safari, Chrome, Edge) ===== */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+button,summary,label,a,.j-opt,.trait,.chip{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+textarea{font-size:16px}
+img,svg{max-width:100%}
+/* hover lifts only where there's a real pointer, so taps don't leave tiles stuck "lifted" */
+@media (hover:none){
+  .j-opt:hover,.btn:not([disabled]):hover{transform:none;box-shadow:none}
+  .j-opt:hover{border-color:var(--line)}
+  .j-opt[aria-pressed="true"]:hover{border-color:var(--c, var(--accent))}
+  .j-scale button:hover{border-color:var(--line)}
+  .j-keys{display:none}
+}
+.j-opt:active{transform:scale(.99)}
+@media (max-width:720px){
+  .wrap{gap:36px;padding-block:20px 48px}
+  .brand-mark small{display:none}
+  .journey{padding:22px 16px 18px;gap:22px}
+  .j-body{min-height:0;gap:16px}
+  .hero h1{font-size:clamp(2.2rem,11vw,3rem)}
+  .j-body .lede{font-size:1rem}
+  h2{font-size:clamp(1.5rem,7vw,1.9rem)}
+  .j-options,.j-options.two{grid-template-columns:1fr;gap:8px}
+  .j-opt{padding:14px}
+  .j-opt span{font-size:.9rem}
+  .j-scale{justify-content:space-between;gap:6px}
+  .j-scale button{width:48px;height:48px;flex:1 1 0;max-width:56px}
+  .j-scale .hint{flex-basis:100%;order:-1;text-align:left}
+  .j-scale .hint:last-child{order:7;text-align:right}
+  .j-nav{position:sticky;bottom:0;background:var(--surface);margin:0 -16px -18px;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));border-radius:0 0 12px 12px;z-index:2}
+  .j-nav .btn{min-height:46px;padding:12px 20px}
+  .j-score{flex-direction:column;align-items:flex-start;gap:8px}
+  .j-score .num{font-size:2.8rem}
+  .loop{grid-template-columns:minmax(0,1fr) 18px minmax(0,1fr)}
+  .node{font-size:.8rem;padding:8px}
+  .takeaways li{font-size:1.02rem;grid-template-columns:28px 1fr}
+  .j-profile b{font-size:1.15rem}
+  .j-secure,.cycle,.align-card,.root{padding:14px}
+  .ecg{margin-inline:-4px}
+  .traits{grid-template-columns:1fr}
+  .trait{padding:12px 14px;font-size:.95rem}
+  .viewmap{grid-template-columns:18px 1fr 1fr}
+  .vm-cell{padding:10px;font-size:.76rem}
+  .j-match .num{font-size:1.3rem}
+}
+@media (max-width:380px){
+  .j-scale button{width:42px;height:42px}
+  .hero h1{font-size:2.05rem}
 }
 </style>
 
@@ -699,7 +749,7 @@ h3{font-size:1.25rem}
   </section>
   </div>
 
-  <p class="note">This is a tool for self-reflection, not a diagnosis. Attachment styles are tendencies, not fixed labels, and they can shift over time. Many people move toward "earned security" through supportive relationships or therapy. Scores here are general tendencies drawn from attachment research; any two people who are self-aware and willing to work on it can build something good. Sources: <a href="https://my.clevelandclinic.org/health/articles/25170-attachment-styles" target="_blank" rel="noopener">Cleveland Clinic</a>, <a href="https://www.attachmentproject.com/blog/four-attachment-styles/" target="_blank" rel="noopener">The Attachment Project</a>, Bartholomew &amp; Horowitz (1991) on the four-category model, and Mikulincer &amp; Shaver, <em>Attachment in Adulthood</em> (2007).</p>
+  <p class="note">This is a tool for self-reflection, not a diagnosis. Attachment styles are tendencies, not fixed labels, and they can shift over time. Many people move toward "earned security" through supportive relationships or therapy. Scores here are general tendencies drawn from attachment research; any two people who are self-aware and willing to work on it can build something good. Sources: <a href="https://my.clevelandclinic.org/health/articles/25170-attachment-styles" target="_blank" rel="noopener">Cleveland Clinic</a>, <a href="https://www.attachmentproject.com/blog/four-attachment-styles/" target="_blank" rel="noopener">The Attachment Project</a>, Bartholomew &amp; Horowitz (1991) on the four-category model, and Mikulincer &amp; Shaver, <em>Attachment in Adulthood</em> (2007), <a href="https://www.helpguide.org/relationships/social-connection/attachment-and-adult-relationships" target="_blank" rel="noopener">HelpGuide</a>, and <a href="https://traumasolutions.com/four-attachment-style-types/" target="_blank" rel="noopener">Dr. Diane Poole Heller</a>.</p>
 </div>
 
 <script>
@@ -743,7 +793,7 @@ const CHILDHOOD={
     rule:"Handle it yourself. Counting on people gets you let down.",
     now:"You go quiet under pressure, keep problems to yourself, and feel crowded when someone wants a lot of closeness.",
     drawn:"Either people who need a lot from you, because taking care of things is familiar, or people who keep their distance, because it feels safe.",
-    compat:"Partners who push for constant closeness trigger your shutdown. A partner who gives you room and talks straight works best."},
+    compat:"Partners who push for constant closeness trigger your shutdown. A partner who gives you room and talks straight works best. Underneath the independence, you still want connection. Everyone's wired for it."},
   disorg:{had:"Home was unpredictable. The person who was supposed to make you feel safe sometimes caused the stress, through anger, chaos, drinking, or things nobody explained.",
     rule:"I want people close, but close is where things go wrong.",
     now:"You can go from all-in to wanting out fast, have trouble trusting good things, and react harder than the moment calls for.",
@@ -759,10 +809,12 @@ const ALIGN={
 };
 const YOUR_SIDE={
   secure:"Don't over-carry. Being the steady one doesn't mean doing all the work.",
-  anxious:"Settle yourself before you reach out, and ask directly instead of testing.",
+  anxious:"Settle yourself before you reach out, and turn complaints into clear requests.",
   avoidant:"Say when you need space and when you'll be back. Disappearing reads as rejection.",
   disorg:"Pause before big reactions. No breakups or ultimatums in the heat of the moment."
 };
+// everyday reasons secure attachment gets interrupted (adapted from HelpGuide)
+const MISSES=["A parent who was very young, stressed, or stretched thin","Depression, illness, or drinking in the house","Divorce, a death, or long separations","Moving a lot, or a rotating cast of caregivers","Being left to handle feelings alone, or being punished for having them"];
 function childhoodHTML(st){
   const c=CHILDHOOD[st];
   return `<div class="j-section"><h3>Where it starts</h3>
@@ -774,7 +826,8 @@ function childhoodHTML(st){
       <div class="root"><span class="picker-label">Who you're drawn to, and why</span><p>${c.drawn}</p></div>
     </div>
     <div class="tip"><strong>What it means for compatibility: </strong>${c.compat}</div>
-    <p class="hint">This isn't about blaming anyone. Most parents did what they could with what they had. It's about knowing your wiring so you run it, instead of it running you. Most people are a mix, so you may see yourself in more than one.</p></div>`;
+    <p class="hint">None of these styles are good or bad. Each one was a smart adaptation to the house you grew up in. It's also less about how much your parents loved you and more about how well they read and answered your signals. This isn't about blame. It's about knowing your wiring so you run it, instead of it running you. Most people are a mix, so you may see yourself in more than one.</p>
+    ${dig("Common reasons a kid doesn't get what they need",`<p class="hint">Plenty of loving parents miss the mark for reasons that have nothing to do with how much they cared:</p><ul>${li(MISSES)}</ul>`)}</div>`;
 }
 const ORIGINS={
   secure:"Usually caregivers who were warm and tuned in to your needs, even the ones you couldn't put into words.",
@@ -1378,6 +1431,8 @@ const CONNECT_PRACTICES=[
   ["Ask open questions","Swap \u201cHow was your day?\u201d for \u201cWhat was the best part of your day?\u201d Curiosity tells someone they're worth knowing."],
   ["Share one small, true thing daily","Closeness is built from small doses of honesty, not one big confession."],
   ["Keep rituals of connection","A phone-free dinner, a morning coffee together, a weekly walk. Rituals make closeness automatic."],
+  ["Read the signals","Put the phone down and watch their face, posture, and tone. Most of what people feel shows up there before they say it."],
+  ["Turn complaints into requests","\u201cYou never call\u201d becomes \u201cI'd like a call on your way home.\u201d Same need, much better odds of getting it."],
   ["Appreciate out loud","Stable couples have about five positive moments for every negative one. Name one thing you appreciate every day."],
   ["Come back after conflict","Connection isn't the absence of fights. It's knowing you'll find your way back to each other."]
 ];
